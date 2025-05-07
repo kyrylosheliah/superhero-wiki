@@ -2,10 +2,26 @@
 
 Tech stack: Node.JS + React + PostgreSQL
 
-Drawing board / TODOs :
-- Node.JS ORM vs handwritten SQL?
-- React state management with builtin contexts vs state management library?
+./backend/.env:
+```
+DATABASE_URL="postgresql://postgres:password@localhost:5433/SuperheroWiki?schema=public"
+```
+
+## Design choises
+
+- Prisma JS ORM:
+    - Automatic typescript support for DB entities
+    - Schema change expectation (wiki functionality expansion)
+- React pages with Next.js:
+    - Personal familiarity
+    - Popular choise = generic feature set
+- React builtin state management
+    - No actual user-owned state
+
+## Drawing board / TODOs
+
 - UI solution?
-- Hero search and sorting options
+- Should loaded entities expect data races and simultaneous edits?
+- Hero search and sorting POST endpoint
 - Docker deployment option?
 - Second DB entity (table) for Wiki-like functionality?
