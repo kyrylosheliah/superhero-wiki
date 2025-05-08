@@ -14,6 +14,9 @@ Tech stack: Node.JS + React + PostgreSQL
     - Popular choise = generic feature set
 - React builtin state management
     - No actual user-owned state
+- Flowbite UI
+    - Low overhead (css generation)
+    - Sketching priority over product maintenance
 
 ## Deployment prerequisites
 
@@ -22,12 +25,18 @@ Tech stack: Node.JS + React + PostgreSQL
 DATABASE_URL="postgresql://postgres:password@localhost:5433/SuperheroWiki?schema=public"
 ```
 
+```
+cd backend
+npm run migrate
+```
+
 ## Drawing board / TODOs
 
+- Hover-flip cards for superhero list
 - Testing solution?
-- UI solution?
-- Swagger or similar tool
-- Should loaded entities expect data races and simultaneous edits?
 - Hero rich search and sorting POST endpoint
 - Docker deployment option?
+- Swagger or similar tool
+- Schema validation solution
+- Should loaded entities expect data races and simultaneous edits?
 - 'Many To Many' DB entities for superpowers Wiki-like functionality?
