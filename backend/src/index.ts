@@ -11,11 +11,9 @@ app.use(cors({
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send("1234");
-});
+const router = app.router;
 
-mapAllEndpoints(app);
+mapAllEndpoints(router);
 
 const PORT = 3001;
 app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
