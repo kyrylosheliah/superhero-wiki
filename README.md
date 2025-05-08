@@ -2,15 +2,10 @@
 
 Tech stack: Node.JS + React + PostgreSQL
 
-./backend/.env:
-```
-DATABASE_URL="postgresql://postgres:password@localhost:5433/SuperheroWiki?schema=public"
-```
-
 ## Design choises
 
 - Kysely Javascript ORM:
-    - Database-first modeling usecase support
+    - Both database-first and code-first modeling usecases support
     - Automatic typescript support for DB entities
     - Migrations support for schema change expectations
     - On the lightweight side of ORMs (?, TODO: fact check)
@@ -31,7 +26,8 @@ DATABASE_URL="postgresql://postgres:password@localhost:5433/SuperheroWiki?schema
 
 - Testing solution?
 - UI solution?
+- Swagger or similar tool
 - Should loaded entities expect data races and simultaneous edits?
-- Hero search and sorting POST endpoint
+- Hero rich search and sorting POST endpoint
 - Docker deployment option?
-- Second DB entity (table) for Wiki-like functionality?
+- 'Many To Many' DB entities for superpowers Wiki-like functionality?

@@ -3,12 +3,17 @@
   "version": "0.0.1",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./src/index.ts",
+    "migrate": "node -r ts-node/register ./src/migrate.ts",
+    "start": "node -r ts-node/register ./src/index.ts",
     "dev": "node --watch -r ts-node/register src/index.ts --stack-trace-limit=50"
   },
   "dependencies": {
+    "@types/pg": "^8.15.0",
     "cors": "^2.8.5",
-    "express": "^5.1.0"
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "kysely": "^0.28.2",
+    "pg": "^8.15.6"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
