@@ -4,9 +4,10 @@ import UnoCSS from "@unocss/webpack";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  webpack: (config) => {
+  webpack: (config, context) => {
     config.plugins.push(UnoCSS());
-    return config
+    config.cache = false;
+    return config;
   },
 };
 

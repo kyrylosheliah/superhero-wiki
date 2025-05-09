@@ -1,4 +1,4 @@
-import SuperheroGallery from "@/components/SuperheroGallery";
+import Home from "@/components/Home";
 
 const home = () => <Home />;
 
