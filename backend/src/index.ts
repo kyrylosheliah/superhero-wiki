@@ -4,12 +4,14 @@ import { mapAllEndpoints } from './endpoints';
 
 const app = express();
 
-// Allow requests from frontend
 app.use(cors({
   origin: "http://localhost:3000",
 }));
 
 app.use(express.json());
+
+app.use(express.raw({ type: 'image/*', limit: '10mb' }));
+app.use('../images', express.static('images'));
 
 const router = app.router;
 

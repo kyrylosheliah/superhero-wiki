@@ -12,9 +12,10 @@ Tech stack: Node.JS + React + PostgreSQL
 - React pages with Next.js:
     - Personal familiarity
     - Popular choise = generic feature set
-- React builtin state management
+    - Builtin SEO options
+- React builtin state management:
     - No actual user-owned state
-- Flowbite UI
+- Flowbite UI:
     - Low overhead (css generation)
     - Sketching priority over product maintenance
 
@@ -33,10 +34,13 @@ npm run migrate
 ## Drawing board / TODOs
 
 - Hover-flip cards for superhero list
+- Cycle images from the list when the card is flipped
 - Testing solution?
 - Hero rich search and sorting POST endpoint
 - Docker deployment option?
-- Swagger or similar tool
+- SwaggerUI via tRPC + Zod:
+    - Endpoint manual testing option
+    - Requests schema validation feature
 - Schema validation solution
 - Should loaded entities expect data races and simultaneous edits?
 - 'Many To Many' DB entities for superpowers Wiki-like functionality?

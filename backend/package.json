@@ -13,7 +13,8 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "kysely": "^0.28.2",
-    "pg": "^8.15.6"
+    "pg": "^8.15.6",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
