@@ -2,9 +2,9 @@ import { TMapEndpoints } from "../";
 import fs, { glob } from "node:fs";
 import { v4 as uuidv4 } from 'uuid';
 
-export const mapSuperheroImageEndpoints: TMapEndpoints = (router) => {
+export const mapSuperheroImageEndpoints: TMapEndpoints = (app) => {
 
-  router.delete('/superhero/image/:id', async (req: any, res) => {
+  app.delete('/superhero/image/:id', async (req: any, res: any) => {
     const filename: string = req.filename;
     //const fileSuperheroId = filename.split('_')[0];
     const filepath = "../images/" + filename;
@@ -16,7 +16,7 @@ export const mapSuperheroImageEndpoints: TMapEndpoints = (router) => {
     }
   });
 
-  router.get('/superhero/image/all/:id', async (req, res) => {
+  app.get('/superhero/image/all/:id', async (req: any, res: any) => {
     glob('../images/${id}*', (err, files) => {
       if (err) {
         const errmsg = 'Error searching for images';
@@ -28,7 +28,7 @@ export const mapSuperheroImageEndpoints: TMapEndpoints = (router) => {
     });
   });
 
-  router.post('/superhero/image/:id', async (req:any, res) => {
+  app.post('/superhero/image/:id', async (req:any, res: any) => {
     const filename = generateFilename(req, getUniqueFilename);
     fs.writeFile(filename, req.image, (err) => {
       if (err) {
@@ -39,7 +39,7 @@ export const mapSuperheroImageEndpoints: TMapEndpoints = (router) => {
     });
   });
 
-  router.put('/superhero/image/:id', async (req: any, res: any) => {
+  app.put('/superhero/image/:id', async (req: any, res: any) => {
     const filename = generateFilename(req, getSpecificFilename);
     fs.writeFile(filename, req.image, (err) => {
       if (err) {

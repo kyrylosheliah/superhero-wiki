@@ -1,10 +1,9 @@
-import express from 'express';
 import { mapSuperheroEndpoints } from './superhero';
 
-export type TMapEndpoints = (router: express.Router) => void;
+export type TMapEndpoints = (app: any) => void;
 
-export const mapAllEndpoints: TMapEndpoints = (router) => {
+export const mapAllEndpoints: TMapEndpoints = (app) => {
 
-  mapSuperheroEndpoints(router);
+  mapSuperheroEndpoints(app);
 
 };

@@ -13,9 +13,7 @@ app.use(express.json());
 app.use(express.raw({ type: 'image/*', limit: '10mb' }));
 app.use('../images', express.static('images'));
 
-const router = app.router;
-
-mapAllEndpoints(router);
+mapAllEndpoints(app);
 
 const PORT = 3001;
 app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
