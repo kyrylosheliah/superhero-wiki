@@ -1,4 +1,5 @@
 import { SuperheroCard } from "@/components/SuperheroCard";
+import SuperheroInfo from "@/components/SuperheroInfo";
 import { Superhero } from "@/entities/Superhero";
 import { useState, useEffect } from "react";
 
@@ -23,7 +24,7 @@ export default function SuperheroGallery() {
         {selectedHeroIndex !== null ? (<>
 
           <div className="w-full">
-              yap yap
+            <SuperheroInfo />
           </div>
           <div
             key="sidebar"
@@ -69,7 +70,6 @@ export default function SuperheroGallery() {
             {heroes.map((hero, index) => (
               <SuperheroCard
                 key={hero.id}
-                selected={index === selectedHeroIndex}
                 hero={hero}
                 options={{
                   onClick: () => setSelectedHeroIndex(index),

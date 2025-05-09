@@ -1,24 +1,18 @@
 import { Superhero } from "@/entities/Superhero";
 
 export const SuperheroCard = (params: {
-  hero: Superhero,
-  selected?: boolean,
-  options?: any,
+  hero: Superhero;
+  options?: any;
 }) => (
   <div
     {...params.options}
-    className={
-      params.selected
-      ? "w-75 h-100 bg-black border border-gray-200 rounded-lg shadow-sm"
-      : "w-75 h-100 bg-white border border-gray-200 rounded-lg shadow-sm"
-    }
+    className="p-4 w-75 h-100 border flex flex-col justify-between items-center border-gray-200 rounded-lg shadow-sm"
   >
-    <div className="p-5">
-      <a href="#">
-        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-          {params.hero.nickname}
-        </h5>
-      </a>
+    <div></div>
+    <div>
+      <p className="fw-700 mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+        {params.hero.nickname}
+      </p>
       <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
         {params.hero.catch_prase}
       </p>
