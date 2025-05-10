@@ -25,7 +25,8 @@ export default function SuperheroInfo(params: {
     form.reset(editableFromSuperhero(params.superhero));
   }, [params.superhero]);
 
-  return (<div className="p-8 p-t-4">
+  return (
+    <div className="p-8 p-t-4">
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col"
@@ -66,7 +67,8 @@ export default function SuperheroInfo(params: {
           </div>
         )}
       </form>
-  </div>);
+    </div>
+  );
 }
 
 /*

@@ -10,11 +10,15 @@ export default function SuperheroGallery() {
 
   const [edit, setEdit] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetch("http://localhost:3001/superhero/all")
+  const refetch = () => {
+    emitHttp("GET", "/superhero/all")
       .then((res) => res.json())
       .then((data) => setSuperheroes(data))
       .catch((err) => console.error(err));
+  }
+
+  useEffect(() => {
+    refetch();
   }, []);
 
   const updateSuperhero = async (data: Superhero) => {
@@ -25,7 +29,7 @@ export default function SuperheroGallery() {
       { id: selectedIndexId, entity: data }
     );
     if (!response.ok) {
-      alert("Error updating a superhero");
+      alert("Error updating the superhero");
       return;
     }
     // unnecessary refetch for testing purposes
@@ -39,6 +43,27 @@ export default function SuperheroGallery() {
         });
       })
       .catch((err) => console.error(err));
+  };
+
+  const deleteSelectedSuperhero = async () => {
+    const confirmation = confirm("Are you sure you want to delete this superhero?");
+    if (!confirmation) return;
+    const selectedIndex = selectedSuperheroIndex!;
+    const selectedIndexId = superheroes[selectedSuperheroIndex!].id;
+    const response = await emitHttp(
+      "DELETE", "/superhero", { id: selectedIndexId }
+    );
+    if (!response.ok) {
+      alert("Error deleting the superhero");
+      return;
+    }
+    setSuperheroes((arr) => {
+      const newArr = [...arr];
+      newArr.splice(selectedIndex, 1);
+      return newArr;
+    });
+    setSelectedSuperheroIndex(null);
+    refetch();
   };
 
   return (
@@ -83,6 +108,16 @@ export default function SuperheroGallery() {
               </div>
             </div>
             <SuperheroCard superhero={superheroes[selectedSuperheroIndex]} />
+            {edit && (
+              <div className="m-t-4 self-end">
+                <button
+                  onClick={() => deleteSelectedSuperhero()}
+                  className="self-end items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
+                >
+                  Delete ...
+                </button>
+              </div>
+            )}
           </div>
         </>
       ) : (
