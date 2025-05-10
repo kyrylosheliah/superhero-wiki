@@ -27,8 +27,8 @@ const Navigation = () => {
               href={path.href}
               className={`px-3 ${
                 path.href === pathname 
-                  ? "text-black fw-700"
-                  : "text-gray-600 hover:text-black"
+                  ? "text-black"
+                  : "text-gray-600 hover:text-black hover:underline"
               } self-center text-2xl whitespace-nowrap`}
             >
               {path.content}

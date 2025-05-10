@@ -7,6 +7,10 @@ export default function SuperheroGallery() {
   const [superheroes, setSuperheroes] = useState<Array<Superhero>>([]);
   const [selectedSuperheroIndex, setSelectedSuperheroIndex] = useState<number | null>(null);
 
+  const [edit, setEdit] = useState<boolean>(false);
+
+  const applyChanges = () => {};
+
   useEffect(() => {
     fetch("http://localhost:3001/superhero/all")
       .then((res) => res.json())
@@ -19,67 +23,65 @@ export default function SuperheroGallery() {
     //    {heroes.map((hero) => <SuperheroCard key={hero.id} hero={hero} />)}
     //  </div>
 
-    <div className="h-full flex w-full overflow-hidden">
-
-        {selectedSuperheroIndex !== null ? (<>
-
+    <div className="h-full flex w-full flex-col md:flex-row">
+      {selectedSuperheroIndex !== null ? (
+        <>
           <div className="w-full">
             <SuperheroInfo superhero={superheroes[selectedSuperheroIndex]} />
           </div>
-          <div
-            key="sidebar"
-            className="p-8 border-l"
-          >
-            <div className="mb-4 flex items-center justify-between">
+          <div className="p-8 p-t-4 order-first md:order-last border-b md:border-l flex flex-col justify-center items-center">
+            <div className="mb-4 w-full flex items-center justify-between">
               <button
                 onClick={() => setSelectedSuperheroIndex(null)}
-                className="text-sm text-gray-600 hover:underline"
+                className="text-gray-600 hover:text-black hover:underline"
               >
                 ← Back to grid
               </button>
-              <button
-                className="items-center p-1 text-gray-600 rounded-lg hover:bg-black hover:text-white"
-              >
-                <svg
-                  className="w-6 h-6"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"
-                  />
-                </svg>
-              </button>
+              <div>
+                {edit ? (
+                  <>
+                    <button
+                      onClick={applyChanges}
+                      className="items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
+                    >
+                      Apply
+                    </button>
+                    {" / "}
+                    <button
+                      onClick={() => setEdit(false)}
+                      className="items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
+                    >
+                      Close
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => setEdit(true)}
+                    className="items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
+                  >
+                    Edit ...
+                  </button>
+                )}
+              </div>
             </div>
             <SuperheroCard superhero={superheroes[selectedSuperheroIndex]} />
           </div>
-
-        </>) : (
-
-          <div
-            className={`w-full h-full flex items-start flex-row flex-wrap justify-around gap-8 p-8`}
-          >
-            {superheroes.map((superhero, index) => (
-              <SuperheroCard
-                key={superhero.id}
-                superhero={superhero}
-                options={{
-                  onClick: () => setSelectedSuperheroIndex(index),
-                }} 
-              />
-            ))}
-          </div>
-
-        )}
-
+        </>
+      ) : (
+        <div
+          className={`w-full h-full flex items-start flex-row flex-wrap justify-around gap-8 p-8`}
+        >
+          {superheroes.map((superhero, index) => (
+            <SuperheroCard
+              key={superhero.id}
+              superhero={superhero}
+              options={{
+                onClick: () => setSelectedSuperheroIndex(index),
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
