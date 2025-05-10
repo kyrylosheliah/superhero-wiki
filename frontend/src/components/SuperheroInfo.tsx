@@ -1,15 +1,29 @@
 import InfoField from "@/components/InfoField";
-import { Superhero } from "@/entities/Superhero";
+import { editableFromSuperhero, EditableSuperhero, Superhero, superheroFromEditable } from "@/entities/Superhero";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function SuperheroInfo(params: {
   edit?: boolean;
-  formOptions?: any;
+  onFormSubmit?: Function;
   superhero: Superhero;
   images?: Array<string>;
 }) {
-  return (<div className="p-16">
 
-      <form {...params.formOptions}>
+  const form = useForm<EditableSuperhero>({
+    defaultValues: editableFromSuperhero(params.superhero),
+  });
+
+  const onSubmit: SubmitHandler<EditableSuperhero> = (data) => {
+    const superhero = superheroFromEditable(data);
+    if (params.onFormSubmit) params.onFormSubmit(superhero);
+    console.log("SuperheroInfo, onSubmit", superhero);
+  };
+
+  return (<div className="p-8 p-t-4">
+
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
 
         {Object.entries(params.superhero).map(([key, value]) => (
 

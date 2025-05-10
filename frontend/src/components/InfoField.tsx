@@ -8,19 +8,18 @@ export default function InfoField(params: {
     <div>
       <label
         {...params.labelOptions}
-        className="block mt-4 text-sm fw-700 text-gray-900 dark:text-white"
+        className="block mt-4 text-sm fw-700 text-gray-900"
       />
-      {params.edit
-      ? (
+      {params.edit ? (
         <input
           {...params.inputOptions}
           value={params.value}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
         />
       )
       : (
         <p>
-          {params.value}
+          {Array.isArray(params.value) ? (params.value.join(", ")) : (params.value)}
         </p>
       )}
     </div>

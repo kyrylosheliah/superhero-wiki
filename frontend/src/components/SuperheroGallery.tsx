@@ -9,8 +9,6 @@ export default function SuperheroGallery() {
 
   const [edit, setEdit] = useState<boolean>(false);
 
-  const applyChanges = () => {};
-
   useEffect(() => {
     fetch("http://localhost:3001/superhero/all")
       .then((res) => res.json())
@@ -23,13 +21,16 @@ export default function SuperheroGallery() {
     //    {heroes.map((hero) => <SuperheroCard key={hero.id} hero={hero} />)}
     //  </div>
 
-    <div className="h-full flex w-full flex-col md:flex-row">
+    <div className="flex flex-col items-center md:flex-row md:items-start">
       {selectedSuperheroIndex !== null ? (
         <>
           <div className="w-full">
-            <SuperheroInfo superhero={superheroes[selectedSuperheroIndex]} />
+            <SuperheroInfo
+              edit={edit}
+              superhero={superheroes[selectedSuperheroIndex]}
+            />
           </div>
-          <div className="p-8 p-t-4 order-first md:order-last border-b md:border-l flex flex-col justify-center items-center">
+          <div className="w-full md:w-auto p-8 p-t-4 order-first md:order-last border-b md:border-l flex flex-col justify-center items-center">
             <div className="mb-4 w-full flex items-center justify-between">
               <button
                 onClick={() => setSelectedSuperheroIndex(null)}
@@ -39,21 +40,12 @@ export default function SuperheroGallery() {
               </button>
               <div>
                 {edit ? (
-                  <>
-                    <button
-                      onClick={applyChanges}
-                      className="items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
-                    >
-                      Apply
-                    </button>
-                    {" / "}
-                    <button
-                      onClick={() => setEdit(false)}
-                      className="items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
-                    >
-                      Close
-                    </button>
-                  </>
+                  <button
+                    onClick={() => setEdit(false)}
+                    className="items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
+                  >
+                    Close edit
+                  </button>
                 ) : (
                   <button
                     onClick={() => setEdit(true)}
@@ -69,7 +61,7 @@ export default function SuperheroGallery() {
         </>
       ) : (
         <div
-          className={`w-full h-full flex items-start flex-row flex-wrap justify-around gap-8 p-8`}
+          className={`w-full flex items-start flex-row flex-wrap justify-around gap-8 p-8`}
         >
           {superheroes.map((superhero, index) => (
             <SuperheroCard
