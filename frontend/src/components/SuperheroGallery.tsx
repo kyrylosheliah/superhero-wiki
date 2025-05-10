@@ -4,13 +4,13 @@ import { Superhero } from "@/entities/Superhero";
 import { useState, useEffect } from "react";
 
 export default function SuperheroGallery() {
-  const [heroes, setHeroes] = useState<Array<Superhero>>([]);
-  const [selectedHeroIndex, setSelectedHeroIndex] = useState<number | null>(null);
+  const [superheroes, setSuperheroes] = useState<Array<Superhero>>([]);
+  const [selectedSuperheroIndex, setSelectedSuperheroIndex] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("http://localhost:3001/superhero/all")
       .then((res) => res.json())
-      .then((data) => setHeroes(data))
+      .then((data) => setSuperheroes(data))
       .catch((err) => console.error(err));
   }, []);
 
@@ -21,10 +21,10 @@ export default function SuperheroGallery() {
 
     <div className="h-full flex w-full overflow-hidden">
 
-        {selectedHeroIndex !== null ? (<>
+        {selectedSuperheroIndex !== null ? (<>
 
           <div className="w-full">
-            <SuperheroInfo />
+            <SuperheroInfo superhero={superheroes[selectedSuperheroIndex]} />
           </div>
           <div
             key="sidebar"
@@ -32,13 +32,13 @@ export default function SuperheroGallery() {
           >
             <div className="mb-4 flex items-center justify-between">
               <button
-                onClick={() => setSelectedHeroIndex(null)}
+                onClick={() => setSelectedSuperheroIndex(null)}
                 className="text-sm text-gray-600 hover:underline"
               >
                 ← Back to grid
               </button>
               <button
-                className="items-center p-1 text-black rounded-lg hover:bg-black hover:text-white"
+                className="items-center p-1 text-gray-600 rounded-lg hover:bg-black hover:text-white"
               >
                 <svg
                   className="w-6 h-6"
@@ -59,7 +59,7 @@ export default function SuperheroGallery() {
                 </svg>
               </button>
             </div>
-            <SuperheroCard hero={heroes[selectedHeroIndex]} />
+            <SuperheroCard superhero={superheroes[selectedSuperheroIndex]} />
           </div>
 
         </>) : (
@@ -67,12 +67,12 @@ export default function SuperheroGallery() {
           <div
             className={`w-full h-full flex items-start flex-row flex-wrap justify-around gap-8 p-8`}
           >
-            {heroes.map((hero, index) => (
+            {superheroes.map((superhero, index) => (
               <SuperheroCard
-                key={hero.id}
-                hero={hero}
+                key={superhero.id}
+                superhero={superhero}
                 options={{
-                  onClick: () => setSelectedHeroIndex(index),
+                  onClick: () => setSelectedSuperheroIndex(index),
                 }} 
               />
             ))}
