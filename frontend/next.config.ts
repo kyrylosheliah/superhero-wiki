@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
     config.cache = false;
     return config;
   },
+  images: {
+    remotePatterns: [new URL('http://localhost:3001/images/**')],
+  },
 };
 
 export default nextConfig;

@@ -9,6 +9,12 @@ export type Superhero = {
   catch_prase: string | null;
 };
 
+export type SuperheroAggregate = {
+  superhero: Superhero;
+  cover?: string;
+  images: Array<string>;
+};
+
 export type EditableSuperhero = Superhero & {
   superpowers: string;
 };

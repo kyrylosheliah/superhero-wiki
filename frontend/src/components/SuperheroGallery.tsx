@@ -1,34 +1,65 @@
 import { SuperheroCard } from "@/components/SuperheroCard";
 import SuperheroForm from "@/components/SuperheroForm";
 import SuperheroInfo from "@/components/SuperheroInfo";
-import { emptySuperhero, Superhero } from "@/entities/Superhero";
+import { emptySuperhero, Superhero, SuperheroAggregate } from "@/entities/Superhero";
 import { emitHttp } from "@/utils/http";
 import { useState, useEffect } from "react";
 
 export default function SuperheroGallery() {
-  const [superheroes, setSuperheroes] = useState<Array<Superhero>>([]);
-  const [selectedSuperheroIndex, setSelectedSuperheroIndex] = useState<
+  const [items, setItems] = useState<Array<SuperheroAggregate>>([]);
+  const [selection, select] = useState<
     number | null
   >(null);
 
-  const unselectSuperhero = () => setSelectedSuperheroIndex(null);
-
-  const refetch = () => {
-    emitHttp("GET", "/superhero/all")
-      .then((res) => res.json())
-      .then((data) => setSuperheroes(data))
-      .catch((err) => console.error(err));
+  const refetch = async () => {
+    const response = await emitHttp("GET", "/superhero/all");
+    const data = await response.json();
+    if (!response.ok) {
+      console.error(data.error);
+      return;
+    }
+    let state: Array<SuperheroAggregate> = (data as Array<Superhero>).map(
+      (el) => ({
+        superhero: el,
+        cover: "",
+        images: [],
+      })
+    );
+    setItems(state);
+    state = await Promise.all(state.map(async (el) => {
+      const response = await emitHttp(
+        "GET", `/superhero/image/all/${el.superhero.id}`
+      );
+      if (!(response.ok || response.status === 302)) return el;
+      var images: Array<string> = (await response.json()).images;
+      if (!images.length) return el;
+      const coverIndex = images.findIndex((value) => value.includes("_cover"));
+      let cover: string | undefined;
+      if (coverIndex !== -1) {
+        cover = images.splice(coverIndex, 1)[0];
+      }
+      return ({
+        superhero: el.superhero,
+        cover: cover,
+        images: images,
+      });
+    }));
+    setItems([...state]);
   };
+
+  useEffect(() => {
+    console.log(items);
+  }, [items]);
 
   useEffect(() => {
     refetch();
   }, []);
 
   const updateSuperhero = async (data: Superhero) => {
-    const selectedIndex = selectedSuperheroIndex!;
-    const selectedIndexId = superheroes[selectedSuperheroIndex!].id;
+    const selectedBefore = selection!;
+    const selectedId = items[selectedBefore].superhero.id;
     const response = await emitHttp("PUT", "/superhero", {
-      id: selectedIndexId,
+      id: selectedId,
       entity: data,
     });
     if (!response.ok) {
@@ -36,12 +67,12 @@ export default function SuperheroGallery() {
       return;
     }
     // unnecessary refetch for testing purposes
-    await emitHttp("GET", `/superhero/${selectedIndexId}`)
+    await emitHttp("GET", `/superhero/${selectedId}`)
       .then((res) => res.json())
       .then((data) => {
-        setSuperheroes((arr) => {
+        setItems((arr) => {
           const newArr = [...arr];
-          newArr[selectedIndex] = data;
+          newArr[selectedBefore] = data;
           return newArr;
         });
       })
@@ -53,21 +84,21 @@ export default function SuperheroGallery() {
       "Are you sure you want to delete this superhero?"
     );
     if (!confirmation) return;
-    const selectedIndex = selectedSuperheroIndex!;
-    const selectedIndexId = superheroes[selectedSuperheroIndex!].id;
+    const selected = selection!;
+    const selectedId = items[selected!].superhero.id;
     const response = await emitHttp("DELETE", "/superhero", {
-      id: selectedIndexId,
+      id: selectedId,
     });
     if (!response.ok) {
       alert("Error deleting the superhero");
       return;
     }
-    setSuperheroes((arr) => {
+    setItems((arr) => {
       const newArr = [...arr];
-      newArr.splice(selectedIndex, 1);
+      newArr.splice(selected, 1);
       return newArr;
     });
-    setSelectedSuperheroIndex(null);
+    select(null);
     refetch();
   };
 
@@ -94,13 +125,13 @@ export default function SuperheroGallery() {
       onFormSubmit={createSuperhero}
       superhero={emptySuperhero()}
     />
-  ) : (selectedSuperheroIndex !== null
+  ) : (selection !== null
     ? (
       <SuperheroInfo
-        close={unselectSuperhero}
+        close={() => select(null)}
         delete={deleteSelectedSuperhero}
         update={updateSuperhero}
-        superhero={superheroes[selectedSuperheroIndex]}
+        superhero={items[selection].superhero}
       />
     ) : (
       <div className="w-full h-full flex flex-col items-center ">
@@ -147,12 +178,13 @@ export default function SuperheroGallery() {
         <div
           className={`w-full flex items-start flex-row flex-wrap justify-around gap-8 p-8`}
         >
-          {superheroes.map((superhero, index) => (
+          {items.map((item, index) => (
             <SuperheroCard
-              key={superhero.id}
-              superhero={superhero}
+              key={item.superhero.id}
+              superhero={item.superhero}
+              cover={item.cover}
               options={{
-                onClick: () => setSelectedSuperheroIndex(index),
+                onClick: () => select(index),
               }}
             />
           ))}

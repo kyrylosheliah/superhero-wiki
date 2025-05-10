@@ -1,6 +1,6 @@
 # Superhero Wiki simple CRUD app
 
-Tech stack: Node.JS + React + PostgreSQL
+Tech stack: Node.JS + Next.js React + PostgreSQL
 
 ## Deployment prerequisites
 
@@ -18,10 +18,9 @@ npm run migrate
 ## Design choises
 
 - Kysely Javascript ORM:
-    - Both database-first and code-first modeling usecases support
-    - Automatic typescript support for DB entities
+    - Code-first modeling usecase support
+    - Thin typescript abstraction layer over SQL
     - Migrations support for schema change expectations
-    - Lightweight (?), modular
 - React pages with Next.js:
     - Popular choise = generic feature set
     - Builtin SEO options
@@ -35,7 +34,7 @@ npm run migrate
 
 Must:
 - Upload and delete cover and secondary images functionality
-- Cycle images from the list when the card is hovered or selected
+- Show and edit cover and other images in the info
 - Sort, search, pagination POST endpoint
 - Ensure that deployment steps are working (missing: run step)
 - Testing solution?
