@@ -8,9 +8,8 @@ Tech stack: Node.JS + React + PostgreSQL
     - Both database-first and code-first modeling usecases support
     - Automatic typescript support for DB entities
     - Migrations support for schema change expectations
-    - On the lightweight side of ORMs (?, TODO: fact check)
+    - Lightweight (?), modular
 - React pages with Next.js:
-    - Personal familiarity
     - Popular choise = generic feature set
     - Builtin SEO options
 - React builtin state management:
@@ -33,14 +32,13 @@ npm run migrate
 
 ## Drawing board / TODOs
 
-- Hover-flip cards for superhero list
-- Cycle images from the list when the card is flipped
+- Cycle images from the list when the card is hovered or selected
+- Sort, search, pagination POST endpoint
 - Testing solution?
-- Hero rich search and sorting POST endpoint
+- Superpower rich list input, superpower chips and rish search page
 - Docker deployment option?
 - SwaggerUI via tRPC + Zod:
-    - Endpoint manual testing option
-    - Requests schema validation feature
-- Schema validation solution
+    - Manual endpoint testing option
+    - Request schema validation feature
 - Should loaded entities expect data races and simultaneous edits?
-- 'Many To Many' DB entities for superpowers Wiki-like functionality?
+- 'Many To Many' DB entities for superpowers Wiki functionality?
