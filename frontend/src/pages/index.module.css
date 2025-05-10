@@ -1,0 +1,84 @@
+.container {
+    line-height: 1.6;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.heading1, .heading2, .heading3 {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.heading1 {
+    font-size: 2.8rem;
+}
+
+.heading2 {
+    font-size: 2rem;
+}
+
+.heading3 {
+    font-size: 1.5rem;
+}
+
+.paragraph {
+    margin-bottom: 1.5rem;
+}
+
+.quote {
+    border-left: 4px solid;
+    margin: 1.5rem 0;
+    padding-left: 1rem;
+    font-style: italic;
+    color: #ccc;
+}
+
+.list {
+    margin-left: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.list_item {
+    margin-bottom: 0.5rem;
+}
+
+.warning {
+    background-color: #ff4444;
+    color: white;
+    padding: 1rem;
+    margin: 2rem 0;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.button_container {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.enter_button {
+    background-color: #00c3ff;
+    color: #000;
+    font-size: 1.5rem;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.enter_button:hover {
+    background-color: #00ffcc;
+    transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+    .heading1 {
+        font-size: 2rem;
+    }
+}

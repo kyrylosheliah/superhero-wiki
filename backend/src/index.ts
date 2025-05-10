@@ -8,6 +8,17 @@ app.use(cors({
   origin: "http://localhost:3000",
 }));
 
+app.use((req, res, next) => {
+  const originalJson = res.json.bind(res);
+  res.json = (data) => {
+    const safeData = JSON.parse(JSON.stringify(data, (_, v) =>
+      typeof v === 'bigint' ? v.toString() : v
+    ));
+    return originalJson(safeData);
+  };
+  next();
+});
+
 app.use(express.json());
 
 app.use(express.raw({ type: 'image/*', limit: '10mb' }));

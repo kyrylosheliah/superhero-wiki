@@ -1,6 +1,7 @@
 import { SuperheroCard } from "@/components/SuperheroCard";
 import SuperheroInfo from "@/components/SuperheroInfo";
 import { Superhero } from "@/entities/Superhero";
+import { emitHttp } from "@/utils/http";
 import { useState, useEffect } from "react";
 
 export default function SuperheroGallery() {
@@ -16,6 +17,30 @@ export default function SuperheroGallery() {
       .catch((err) => console.error(err));
   }, []);
 
+  const updateSuperhero = async (data: Superhero) => {
+    const selectedIndex = selectedSuperheroIndex!;
+    const selectedIndexId = superheroes[selectedSuperheroIndex!].id;
+    const response = await emitHttp(
+      "PUT", "/superhero",
+      { id: selectedIndexId, entity: data }
+    );
+    if (!response.ok) {
+      alert("Error updating a superhero");
+      return;
+    }
+    // unnecessary refetch for testing purposes
+    await emitHttp("GET", `/superhero/${selectedIndexId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setSuperheroes((arr) => {
+          const newArr = [...arr];
+          newArr[selectedIndex] = data;
+          return newArr;
+        });
+      })
+      .catch((err) => console.error(err));
+  };
+
   return (
     //  <div className="min-h-screen bg-gray-100 p-10 grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
     //    {heroes.map((hero) => <SuperheroCard key={hero.id} hero={hero} />)}
@@ -27,6 +52,7 @@ export default function SuperheroGallery() {
           <div className="w-full">
             <SuperheroInfo
               edit={edit}
+              onFormSubmit={updateSuperhero}
               superhero={superheroes[selectedSuperheroIndex]}
             />
           </div>

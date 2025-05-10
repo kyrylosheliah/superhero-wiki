@@ -6,7 +6,7 @@ export const SuperheroCard = (params: {
 }) => (
   <div
     {...params.options}
-    className="p-4 w-75 h-100 border flex flex-col justify-between items-center border-gray-200 rounded-lg shadow-sm"
+    className="p-4 w-75 h-100 hover:cursor-pointer border flex flex-col justify-between items-center text-center border-gray-200 rounded-lg shadow-sm"
   >
     <div></div>
     <div>

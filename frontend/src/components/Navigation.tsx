@@ -15,7 +15,7 @@ const paths = [
 ];
 
 const Navigation = () => {
-  const pathname = usePathname()
+  const pathname = usePathname();
   
   return (
     <nav className="bg-white border-b dark:bg-gray-900">

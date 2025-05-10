@@ -1,4 +1,4 @@
-import { stringArrayToString, stringToStringArray } from "@/utils/arrayEditionInterception";
+import { stringFromStringArray, stringArrayFromString } from "@/utils/arrayEditionInterception";
 
 export type Superhero = {
   id: number;
@@ -15,12 +15,12 @@ export type EditableSuperhero = Superhero & {
 
 export const editableFromSuperhero = (obj: Superhero) => {
   let newObj: any = { ...obj };
-  newObj.superpowers = stringArrayToString(newObj.superpowers);
+  newObj.superpowers = stringFromStringArray(newObj.superpowers);
   return newObj as EditableSuperhero;
 };
 
 export const superheroFromEditable = (obj: EditableSuperhero) => {
   let newObj: any = { ...obj };
-  newObj.superpowers = stringToStringArray(newObj.superpowers);
+  newObj.superpowers = stringArrayFromString(newObj.superpowers);
   return newObj as Superhero;
 };

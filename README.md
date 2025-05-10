@@ -34,7 +34,7 @@ npm run migrate
 ## Drawing board / TODOs
 
 Must:
-- Create, edit, remove superhero functionality
+- Create and remove superhero functionality
 - Upload and delete cover and secondary images functionality
 - Cycle images from the list when the card is hovered or selected
 - Sort, search, pagination POST endpoint

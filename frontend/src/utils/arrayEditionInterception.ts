@@ -1,5 +1,5 @@
-export const stringArrayToString = (input: Array<string>) =>
+export const stringFromStringArray = (input: Array<string>) =>
   input.join(", ");
 
-export const stringToStringArray = (input: string) =>
-  input.split(",").map((e) => e.trim);
+export const stringArrayFromString = (input: string) =>
+  input.split(",").map((e) => e.trim());

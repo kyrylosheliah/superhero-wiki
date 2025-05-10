@@ -1,6 +1,9 @@
 import { Generated, Insertable, PostgresDialect, Selectable, Updateable } from "kysely";
 import { Kysely } from "kysely";
 import { Pool } from 'pg';
+import pg from 'pg';
+
+pg.types.setTypeParser(20, (val: string) => val);
 
 import * as dotenv from 'dotenv';
 dotenv.config();
