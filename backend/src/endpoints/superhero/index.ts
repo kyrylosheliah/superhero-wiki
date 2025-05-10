@@ -1,10 +1,11 @@
 import { TMapEndpoints } from "..";
-import { db } from "../../database";
+import { db, TSuperheroCreate, TSuperheroUpdate } from "../../database";
+import { createSuperhero, deleteSuperhero, findSuperheroById, updateSuperhero } from "../../database/SuperheroRepository";
 import { mapSuperheroImageEndpoints } from "./image";
 
 export const mapSuperheroEndpoints: TMapEndpoints = (app) => {
 
-  //mapSuperheroImageEndpoints(app);
+  mapSuperheroImageEndpoints(app);
 
   app.get('/superhero/all', async (req: any, res: any) => {
     const superheroes = await db.selectFrom('superhero')
@@ -13,12 +14,12 @@ export const mapSuperheroEndpoints: TMapEndpoints = (app) => {
     res.json(superheroes);
   });
 
-  app.delete('/superhero/:id', async (req: any, res: any) => {
+  app.delete('/superhero/:id', async (
+    req: { params: { id: string } },
+    res: any,
+  ) => {
    const id = parseInt(req.params.id, 10);
-   const result = await db.deleteFrom('superhero')
-     .where('id', '=', id)
-     .returningAll()
-     .executeTakeFirst();
+   const result = await deleteSuperhero(id);
    if (result) {
      res.json({ deleted: result });
    } else {
@@ -26,12 +27,12 @@ export const mapSuperheroEndpoints: TMapEndpoints = (app) => {
    }
   });
 
-  app.get('/superhero/:id', async (req: any, res: any) => {
+  app.get('/superhero/:id', async (
+    req: { params: { id: string } },
+    res: any,
+  ) => {
    const id = parseInt(req.params.id, 10);
-   const superhero = await db.selectFrom('superhero')
-     .selectAll()
-     .where('id', '=', id)
-     .executeTakeFirst();
+   const superhero = await findSuperheroById(id);
    if (superhero) {
      res.json(superhero);
    } else {
@@ -39,22 +40,23 @@ export const mapSuperheroEndpoints: TMapEndpoints = (app) => {
    }
   });
 
-  app.post('/superhero', async (req: any, res: any) => {
-    const { entity } = req.body;
-    const result = await db.insertInto('superhero')
-      .values(entity)
-      .returningAll()
-      .executeTakeFirst();
+  app.post('/superhero', async (
+    req: { entity: TSuperheroCreate },
+    res: any,
+  ) => {
+    const result = await createSuperhero(req.entity);
     res.status(201).json(result);
   });
 
-  app.put('/superhero/:id', async (req: any, res: any) => {
-    const id = parseInt(req.id, 10);
-    const result = await db.updateTable('superhero')
-      .set(req)
-      .where('id', '=', id)
-      .returningAll()
-      .executeTakeFirst();
+  app.put('/superhero/:id', async (
+    req: {
+      params: { id: string },
+      entity: TSuperheroUpdate,
+    },
+    res: any,
+  ) => {
+    const id = parseInt(req.params.id, 10);
+    const result = await updateSuperhero(id, req.entity);
     if (result) {
       res.json(result);
     } else {

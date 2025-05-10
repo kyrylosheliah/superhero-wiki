@@ -18,9 +18,9 @@ export interface SuperheroTable {
   catch_prase: string | null;
 }
 
-export type Superhero = Selectable<SuperheroTable>;
-export type NewSuperhero = Insertable<SuperheroTable>;
-export type SuperheroUpdate = Updateable<SuperheroTable>;
+export type TSuperheroSelect = Selectable<SuperheroTable>;
+export type TSuperheroCreate = Insertable<SuperheroTable>;
+export type TSuperheroUpdate = Updateable<SuperheroTable>;
 
 const dialect = new PostgresDialect({
   pool: new Pool({
