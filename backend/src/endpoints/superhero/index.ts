@@ -37,7 +37,13 @@ export const mapSuperheroEndpoints: TMapEndpoints = (app) => {
   });
 
   app.post('/superhero', async (req: Request, res: Response) => {
-    const { entity }: { entity: TSuperheroCreate } = req.body;
+    let { entity }: { entity: TSuperheroCreate } = req.body;
+    if (entity.nickname === "") {
+      // 422 unprocessable entity
+      res.status(422).json({ error: "Nickname is empty"});
+      return;
+    }
+    entity.id = undefined;
     const result = await createSuperhero(entity);
     res.status(201).json(result);
   });

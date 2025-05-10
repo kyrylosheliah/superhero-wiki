@@ -1,102 +1,61 @@
-import { editableFromSuperhero, EditableSuperhero, Superhero, superheroFromEditable } from "@/entities/Superhero";
-import { useEffect } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SuperheroCard } from "@/components/SuperheroCard";
+import SuperheroForm from "@/components/SuperheroForm";
+import { Superhero } from "@/entities/Superhero";
+import { useState } from "react";
 
 export default function SuperheroInfo(params: {
-  edit?: boolean;
-  onFormSubmit: Function;
   superhero: Superhero;
-  images?: Array<string>;
+  close: Function;
+  delete: Function;
+  update: (data: Superhero) => Promise<void>;
 }) {
-
-  const form = useForm<EditableSuperhero>({
-    defaultValues: editableFromSuperhero(params.superhero),
-  });
-
-  const isDirty = (key: string) =>
-    form.formState.dirtyFields[key as keyof EditableSuperhero];
-
-  const onSubmit: SubmitHandler<EditableSuperhero> = (data) => {
-    const superhero = superheroFromEditable(data);
-    params.onFormSubmit(superhero);
-  };
-
-  useEffect(() => {
-    form.reset(editableFromSuperhero(params.superhero));
-  }, [params.superhero]);
+  const [edit, setEdit] = useState<boolean>(false);
 
   return (
-    <div className="p-8 p-t-4">
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col"
-      >
-        {Object.entries(params.superhero).map(([key, value]) => (
-          <div key={"superhero_prop_" + key}>
-            <label
-              htmlFor={key}
-              children={key}
-              className="block mt-4 text-sm fw-700 text-gray-900"
-            />
-            {params.edit ? (
-              <input
-                {...form.register(key as keyof EditableSuperhero)}
-                className={`bg-gray-50 border focus:outline-none ${isDirty(key) ? "border-yellow-600" : "border-gray-300"} text-gray-900 text-sm rounded-lg block w-full p-2.5`}
-              />
-            ) : (
-              <p>
-                {Array.isArray(value) ? value.join(", ") : value}
-              </p>
-            )}
-          </div>
-        ))}
-        {params.edit && (
-          <div className="flex flex-row justify-between items-center">
+    <div className="flex flex-col md:flex-row md:order-first">
+      <div className="w-full">
+        <SuperheroForm
+          edit={edit}
+          onFormSubmit={params.update}
+          superhero={params.superhero}
+        />
+      </div>
+      <div className="w-full md:w-auto p-8 p-t-4 order-first md:order-last border-b md:border-l flex flex-col justify-start items-center">
+        <div className="mb-4 w-full flex items-center justify-between">
+          <button
+            onClick={() => params.close()}
+            className="text-gray-600 hover:text-black hover:underline"
+          >
+            ← Back
+          </button>
+          {edit ? (
             <button
-              onClick={() => form.reset()}
-              className="self-end mt-4 px-3 py-2 text-gray-600 hover:text-black hover:underline"
+              onClick={() => setEdit(false)}
+              className="items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
             >
-              Reset
+              Close edit
             </button>
+          ) : (
             <button
-              type="submit"
-              className="self-end mt-4 px-3 py-2 text-gray-600 hover:text-black hover:underline"
+              onClick={() => setEdit(true)}
+              className="items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
             >
-              Apply
+              Edit ...
+            </button>
+          )}
+        </div>
+        <SuperheroCard superhero={params.superhero} />
+        {edit && (
+          <div className="m-t-4 self-end">
+            <button
+              onClick={() => params.delete()}
+              className="self-end items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
+            >
+              Delete ...
             </button>
           </div>
         )}
-      </form>
+      </div>
     </div>
   );
 }
-
-/*
-
-// Images?
-
-<div class="grid gap-4">
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/featured/image.jpg" alt="">
-    </div>
-    <div class="grid grid-cols-5 gap-4">
-        <div>
-            <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg" alt="">
-        </div>
-        <div>
-            <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg" alt="">
-        </div>
-        <div>
-            <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg" alt="">
-        </div>
-        <div>
-            <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-4.jpg" alt="">
-        </div>
-        <div>
-            <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg" alt="">
-        </div>
-    </div>
-</div>
-
-
-*/

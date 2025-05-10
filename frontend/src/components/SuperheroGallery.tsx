@@ -1,21 +1,24 @@
 import { SuperheroCard } from "@/components/SuperheroCard";
+import SuperheroForm from "@/components/SuperheroForm";
 import SuperheroInfo from "@/components/SuperheroInfo";
-import { Superhero } from "@/entities/Superhero";
+import { emptySuperhero, Superhero } from "@/entities/Superhero";
 import { emitHttp } from "@/utils/http";
 import { useState, useEffect } from "react";
 
 export default function SuperheroGallery() {
   const [superheroes, setSuperheroes] = useState<Array<Superhero>>([]);
-  const [selectedSuperheroIndex, setSelectedSuperheroIndex] = useState<number | null>(null);
+  const [selectedSuperheroIndex, setSelectedSuperheroIndex] = useState<
+    number | null
+  >(null);
 
-  const [edit, setEdit] = useState<boolean>(false);
+  const unselectSuperhero = () => setSelectedSuperheroIndex(null);
 
   const refetch = () => {
     emitHttp("GET", "/superhero/all")
       .then((res) => res.json())
       .then((data) => setSuperheroes(data))
       .catch((err) => console.error(err));
-  }
+  };
 
   useEffect(() => {
     refetch();
@@ -24,10 +27,10 @@ export default function SuperheroGallery() {
   const updateSuperhero = async (data: Superhero) => {
     const selectedIndex = selectedSuperheroIndex!;
     const selectedIndexId = superheroes[selectedSuperheroIndex!].id;
-    const response = await emitHttp(
-      "PUT", "/superhero",
-      { id: selectedIndexId, entity: data }
-    );
+    const response = await emitHttp("PUT", "/superhero", {
+      id: selectedIndexId,
+      entity: data,
+    });
     if (!response.ok) {
       alert("Error updating the superhero");
       return;
@@ -46,13 +49,15 @@ export default function SuperheroGallery() {
   };
 
   const deleteSelectedSuperhero = async () => {
-    const confirmation = confirm("Are you sure you want to delete this superhero?");
+    const confirmation = confirm(
+      "Are you sure you want to delete this superhero?"
+    );
     if (!confirmation) return;
     const selectedIndex = selectedSuperheroIndex!;
     const selectedIndexId = superheroes[selectedSuperheroIndex!].id;
-    const response = await emitHttp(
-      "DELETE", "/superhero", { id: selectedIndexId }
-    );
+    const response = await emitHttp("DELETE", "/superhero", {
+      id: selectedIndexId,
+    });
     if (!response.ok) {
       alert("Error deleting the superhero");
       return;
@@ -66,61 +71,79 @@ export default function SuperheroGallery() {
     refetch();
   };
 
-  return (
-    //  <div className="min-h-screen bg-gray-100 p-10 grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-    //    {heroes.map((hero) => <SuperheroCard key={hero.id} hero={hero} />)}
-    //  </div>
+  const [creation, setCreation] = useState<boolean>(false);
 
-    <div className="flex flex-col items-center md:flex-row md:items-start">
-      {selectedSuperheroIndex !== null ? (
-        <>
-          <div className="w-full">
-            <SuperheroInfo
-              edit={edit}
-              onFormSubmit={updateSuperhero}
-              superhero={superheroes[selectedSuperheroIndex]}
+  const createSuperhero = async (data: Superhero) => {
+    data.id = 0;
+    const response = await emitHttp("POST", "/superhero", { entity: data });
+    if (!response.ok) {
+      const { error } = await response.json();
+      alert(`Error creating a superhero: ${error}`);
+      return;
+    }
+    const newEntity = await response.json();
+    alert(`New superhero created with id ${newEntity.id}`);
+    refetch();
+    setCreation(false);
+  };
+
+  return creation ? (
+    <SuperheroForm
+      edit={true}
+      close={() => setCreation(false)}
+      onFormSubmit={createSuperhero}
+      superhero={emptySuperhero()}
+    />
+  ) : (selectedSuperheroIndex !== null
+    ? (
+      <SuperheroInfo
+        close={unselectSuperhero}
+        delete={deleteSelectedSuperhero}
+        update={updateSuperhero}
+        superhero={superheroes[selectedSuperheroIndex]}
+      />
+    ) : (
+      <div className="w-full h-full flex flex-col items-center ">
+        <div className="m-t-8 w-full h-full max-w-100 flex flex-row items-center justify-center">
+          <form className="w-full h-full flex flex-row justify-start items-center">
+            <label htmlFor="search" className="sr-only">
+              Search
+            </label>
+            <input
+              type="search"
+              id="search"
+              className="block w-full p-2 text-sm border border-gray-300 rounded-lg"
+              placeholder="Search"
+              required
             />
-          </div>
-          <div className="w-full md:w-auto p-8 p-t-4 order-first md:order-last border-b md:border-l flex flex-col justify-center items-center">
-            <div className="mb-4 w-full flex items-center justify-between">
-              <button
-                onClick={() => setSelectedSuperheroIndex(null)}
-                className="text-gray-600 hover:text-black hover:underline"
+            <button
+              type="submit"
+              className="w-10! h-8! m-l-1 rounded-lg flex items-center justify-center text-gray-500 hover:bg-black hover:text-white"
+            >
+              <svg
+                className="w-4 h-4"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
               >
-                ← Back to grid
-              </button>
-              <div>
-                {edit ? (
-                  <button
-                    onClick={() => setEdit(false)}
-                    className="items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
-                  >
-                    Close edit
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setEdit(true)}
-                    className="items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
-                  >
-                    Edit ...
-                  </button>
-                )}
-              </div>
-            </div>
-            <SuperheroCard superhero={superheroes[selectedSuperheroIndex]} />
-            {edit && (
-              <div className="m-t-4 self-end">
-                <button
-                  onClick={() => deleteSelectedSuperhero()}
-                  className="self-end items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
-                >
-                  Delete ...
-                </button>
-              </div>
-            )}
-          </div>
-        </>
-      ) : (
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                />
+              </svg>
+            </button>
+          </form>
+          <button
+            onClick={() => setCreation(true)}
+            className="m-l-8 whitespace-nowrap items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
+          >
+            Or add new ...
+          </button>
+        </div>
         <div
           className={`w-full flex items-start flex-row flex-wrap justify-around gap-8 p-8`}
         >
@@ -134,7 +157,7 @@ export default function SuperheroGallery() {
             />
           ))}
         </div>
-      )}
-    </div>
+      </div>
+    )
   );
 }

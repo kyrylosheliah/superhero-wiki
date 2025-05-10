@@ -24,3 +24,12 @@ export const superheroFromEditable = (obj: EditableSuperhero) => {
   newObj.superpowers = stringArrayFromString(newObj.superpowers);
   return newObj as Superhero;
 };
+
+export const emptySuperhero = (): Superhero => ({
+  id: 0,
+  nickname: "",
+  real_name: null,
+  origin_description: null,
+  superpowers: [],
+  catch_prase: null,
+});
