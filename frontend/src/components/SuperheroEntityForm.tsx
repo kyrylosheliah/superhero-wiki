@@ -1,4 +1,4 @@
-import { editableFromSuperhero, EditableSuperhero, Superhero, superheroFromEditable } from "@/entities/Superhero";
+import { editableFromSuperhero, TEditableSuperhero, TSuperhero, superheroFromEditable } from "@/entities/Superhero";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -6,18 +6,18 @@ export default function SuperheroEntityForm(params: {
   edit?: boolean;
   close?: Function;
   onFormSubmit: Function;
-  superhero: Superhero;
+  superhero: TSuperhero;
   images?: Array<string>;
 }) {
 
-  const form = useForm<EditableSuperhero>({
+  const form = useForm<TEditableSuperhero>({
     defaultValues: editableFromSuperhero(params.superhero),
   });
 
   const isDirty = (key: string) =>
-    form.formState.dirtyFields[key as keyof EditableSuperhero];
+    form.formState.dirtyFields[key as keyof TEditableSuperhero];
 
-  const onSubmit: SubmitHandler<EditableSuperhero> = (data) => {
+  const onSubmit: SubmitHandler<TEditableSuperhero> = (data) => {
     const superhero = superheroFromEditable(data);
     params.onFormSubmit(superhero);
   };
@@ -47,7 +47,7 @@ export default function SuperheroEntityForm(params: {
             />
             {params.edit ? (
               <input
-                {...form.register(key as keyof EditableSuperhero)}
+                {...form.register(key as keyof TEditableSuperhero)}
                 className={`bg-gray-50 border focus:outline-none ${isDirty(key) ? "border-yellow-600" : "border-gray-300"} text-gray-900 text-sm rounded-lg block w-full p-2.5`}
               />
             ) : (
@@ -77,33 +77,3 @@ export default function SuperheroEntityForm(params: {
     </div>
   );
 }
-
-/*
-
-// Images?
-
-<div class="grid gap-4">
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/featured/image.jpg" alt="">
-    </div>
-    <div class="grid grid-cols-5 gap-4">
-        <div>
-            <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg" alt="">
-        </div>
-        <div>
-            <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg" alt="">
-        </div>
-        <div>
-            <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg" alt="">
-        </div>
-        <div>
-            <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-4.jpg" alt="">
-        </div>
-        <div>
-            <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg" alt="">
-        </div>
-    </div>
-</div>
-
-
-*/

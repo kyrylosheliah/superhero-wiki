@@ -1,5 +1,5 @@
-import SuperheroGallery from "@/components/SuperheroGallery";
+import SuperheroSearch from "@/components/SuperheroSearch";
 
-const superheroes = () => <SuperheroGallery />;
+const superheroes = () => <SuperheroSearch />;
 
 export default superheroes;

@@ -1,11 +1,11 @@
-import { Superhero } from "@/entities/Superhero";
+import { TSuperhero } from "@/entities/Superhero";
 import { SERVER } from "@/utils/http";
 import Image from "next/image";
 
 import styles from './SuperheroCard.module.css';
 
 export const SuperheroCard = (params: {
-  superhero: Superhero;
+  superhero: TSuperhero;
   cover?: string;
   options?: any;
 }) => (

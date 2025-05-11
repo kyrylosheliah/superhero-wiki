@@ -1,9 +1,9 @@
-import { SuperheroSearch } from "@/entities/Superhero";
+import { TSuperheroSearch } from "@/entities/Superhero";
 import { UseFormReturn } from "react-hook-form";
 
 export default function SuperheroSearchForm(params: {
   onFormSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
-  form: UseFormReturn<SuperheroSearch, any, SuperheroSearch>;
+  form: UseFormReturn<TSuperheroSearch, any, TSuperheroSearch>;
 }) {
   return (
     <form

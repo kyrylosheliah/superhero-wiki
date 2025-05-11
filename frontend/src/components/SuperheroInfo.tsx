@@ -1,15 +1,15 @@
 import { SuperheroCard } from "@/components/SuperheroCard";
 import SuperheroEntityForm from "@/components/SuperheroEntityForm";
-import { Superhero } from "@/entities/Superhero";
+import { TSuperhero } from "@/entities/Superhero";
 import { useState } from "react";
 
 export default function SuperheroInfo(params: {
-  superhero: Superhero;
+  superhero: TSuperhero;
   cover?: string;
   images: Array<string>;
   close: Function;
   delete: Function;
-  update: (data: Superhero) => Promise<void>;
+  update: (data: TSuperhero) => Promise<void>;
 }) {
   const [edit, setEdit] = useState<boolean>(false);
 

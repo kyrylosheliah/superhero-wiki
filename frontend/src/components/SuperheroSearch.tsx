@@ -3,29 +3,29 @@ import { SuperheroCard } from "@/components/SuperheroCard";
 import SuperheroEntityForm from "@/components/SuperheroEntityForm";
 import SuperheroInfo from "@/components/SuperheroInfo";
 import SuperheroSearchForm from "@/components/SuperheroSearchForm";
-import { emptySuperhero, emptySuperheroSearch, Superhero, SuperheroAggregate, SuperheroSearch } from "@/entities/Superhero";
+import { emptySuperhero, emptySuperheroSearch, TSuperhero, TSuperheroAggregate, TSuperheroSearch } from "@/entities/Superhero";
 import { emitHttp } from "@/utils/http";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-export default function SuperheroGallery() {
-  const [items, setItems] = useState<Array<SuperheroAggregate>>([]);
+export default function SuperheroSearch() {
+  const [items, setItems] = useState<Array<TSuperheroAggregate>>([]);
   const [selection, select] = useState<number | null>(null);
 
-  const searchForm = useForm<SuperheroSearch>({
+  const searchForm = useForm<TSuperheroSearch>({
     defaultValues: emptySuperheroSearch(),
   });
   const [pageNo, setPageNo] = useState<number>(1);
   const [pageCount, setPageCount] = useState<number>(0);
 
-  const submitSuperheroesSearch = searchForm.handleSubmit(async (data: SuperheroSearch) => {
+  const submitSuperheroesSearch = searchForm.handleSubmit(async (data: TSuperheroSearch) => {
     const response = await emitHttp("POST", "/superhero/search", data);
     if (!response.ok) {
       setItems([]);
       return;
     }
     const searchResult: {
-      found: Array<Superhero>;
+      found: Array<TSuperhero>;
       pageCount: number;
     } = await response.json();
     setPageCount(searchResult.pageCount);
@@ -45,8 +45,8 @@ export default function SuperheroGallery() {
     submitSuperheroesSearch();
   }, [pageNo]);
 
-  const assembleSuperheroes = async (found: Array<Superhero>) => {
-    let state: Array<SuperheroAggregate> = (found).map(
+  const assembleSuperheroes = async (found: Array<TSuperhero>) => {
+    let state: Array<TSuperheroAggregate> = (found).map(
       (el) => ({
         superhero: el,
         cover: "",
@@ -75,7 +75,7 @@ export default function SuperheroGallery() {
   //  console.log(items);
   //}, [items]);
 
-  const updateSuperhero = async (data: Superhero) => {
+  const updateSuperhero = async (data: TSuperhero) => {
     const selectedBefore = selection!;
     const selectedId = items[selectedBefore].superhero.id;
     const response = await emitHttp("PUT", "/superhero", {
@@ -124,7 +124,7 @@ export default function SuperheroGallery() {
 
   const [creation, setCreation] = useState<boolean>(false);
 
-  const createSuperhero = async (data: Superhero) => {
+  const createSuperhero = async (data: TSuperhero) => {
     data.id = 0;
     const response = await emitHttp("POST", "/superhero", { entity: data });
     if (!response.ok) {

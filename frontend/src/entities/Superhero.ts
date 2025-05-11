@@ -1,6 +1,6 @@
 import { stringFromStringArray, stringArrayFromString } from "@/utils/arrayEditionInterception";
 
-export type Superhero = {
+export type TSuperhero = {
   id: number;
   nickname: string;
   real_name: string | null;
@@ -9,29 +9,29 @@ export type Superhero = {
   catch_prase: string | null;
 };
 
-export type SuperheroAggregate = {
-  superhero: Superhero;
+export type TSuperheroAggregate = {
+  superhero: TSuperhero;
   cover?: string;
   images: Array<string>;
 };
 
-export type EditableSuperhero = Superhero & {
+export type TEditableSuperhero = TSuperhero & {
   superpowers: string;
 };
 
-export const editableFromSuperhero = (obj: Superhero) => {
+export const editableFromSuperhero = (obj: TSuperhero) => {
   let newObj: any = { ...obj };
   newObj.superpowers = stringFromStringArray(newObj.superpowers);
-  return newObj as EditableSuperhero;
+  return newObj as TEditableSuperhero;
 };
 
-export const superheroFromEditable = (obj: EditableSuperhero) => {
+export const superheroFromEditable = (obj: TEditableSuperhero) => {
   let newObj: any = { ...obj };
   newObj.superpowers = stringArrayFromString(newObj.superpowers);
-  return newObj as Superhero;
+  return newObj as TSuperhero;
 };
 
-export const emptySuperhero = (): Superhero => ({
+export const emptySuperhero = (): TSuperhero => ({
   id: 0,
   nickname: "",
   real_name: null,
@@ -40,15 +40,15 @@ export const emptySuperhero = (): Superhero => ({
   catch_prase: null,
 });
 
-export interface SuperheroSearch {
+export type TSuperheroSearch = {
   pageNo: number;
   pageSize: number;
   ascending?: boolean;
-  orderBy?: keyof Superhero | undefined;
+  orderBy?: keyof TSuperhero | undefined;
   text?: string;
 }
 
-export const emptySuperheroSearch = (): SuperheroSearch => ({
+export const emptySuperheroSearch = (): TSuperheroSearch => ({
   pageNo: 1,
   pageSize: 5,
   ascending: true,
