@@ -39,3 +39,19 @@ export const emptySuperhero = (): Superhero => ({
   superpowers: [],
   catch_prase: null,
 });
+
+export interface SuperheroSearch {
+  pageNo: number;
+  pageSize: number;
+  ascending?: boolean;
+  orderBy?: keyof Superhero | undefined;
+  text?: string;
+}
+
+export const emptySuperheroSearch = (): SuperheroSearch => ({
+  pageNo: 1,
+  pageSize: 5,
+  ascending: true,
+  orderBy: undefined,
+  text: undefined,
+});

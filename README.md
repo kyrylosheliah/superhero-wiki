@@ -34,16 +34,16 @@ npm run migrate
 
 Must:
 - Upload and delete cover and secondary images functionality
-- Show and edit cover and other images in the info
-- Sort, search, pagination POST endpoint
+- Show and edit gallery images in the info
 - Ensure that deployment steps are working (missing: run step)
 - Testing solution?
 
 Could:
-- Superpower rich list input, superpower chips and rish search page
-- Multisearch by spawning search field criteria
+- Sorting order and orderBy field selection elements
+- Further normalization tables for superpowers Wiki functionality?
+- Superpower rich list input, superpower chips and 
+- Rich search with multiple search field criteria spawn
 - Docker deployment option?
 - SwaggerUI via tRPC + Zod:
     - Manual endpoint testing option
     - Request schema validation feature
-- Further normalization tables for superpowers Wiki functionality?

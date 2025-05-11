@@ -11,19 +11,20 @@ export const SuperheroCard = (params: {
 }) => (
   <div
     {...params.options}
-    className={`${styles.inherit_radius} ${!params.cover && "border border-gray-200"} relative p-4 w-75 h-100 hover:cursor-pointer flex flex-col justify-between items-center text-center shadow-sm rounded-xl`}
+    className={`${styles.inherit_radius} ${!params.cover && "border border-gray-200"} relative p-4 w-60 h-80 hover:cursor-pointer flex flex-col justify-between items-center text-center shadow-sm rounded-xl overflow-hidden`}
   >
     {params.cover && (
       <Image
         alt={params.superhero.nickname}
         src={SERVER + params.cover}
         fill
+        sizes="(max-width: 240px) 100vw, (max-width: 320px) 75vw, 33vw"
         className="object-cover"
       />
     )}
     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
     <div className="absolute bottom-1.25">
-      <p className="fw-700 mb-2 text-2xl font-bold tracking-tight text-gray-100">
+      <p className="fw-700 mb-2 text-xl font-bold tracking-tight text-gray-100">
         {params.superhero.nickname}
       </p>
       {params.superhero.catch_prase && (

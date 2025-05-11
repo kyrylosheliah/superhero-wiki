@@ -1,3 +1,4 @@
+import { sql } from 'kysely';
 import { db, getSuperheroKeys, SuperheroTable, TSuperheroCreate, TSuperheroSelect, TSuperheroUpdate } from '.';
 
 export async function findSuperheroById(id: number) {
@@ -32,18 +33,40 @@ export async function pageFilterSuperheroes(searchRequest: SuperheroSearchReques
     orderBy && keys.includes(orderBy as keyof SuperheroTable)
       ? orderBy as keyof SuperheroTable
       : "id";
-  let query = db.selectFrom('superhero');
+  let filteringQuery = db.selectFrom('superhero');
   if (text) {
-    keys.map((key) => {
-      query = query.where(key, 'like', `%${text}%`);
-    });
+    //keys.map((key) => {
+    //  filteringQuery = filteringQuery.where(key, 'like', `%${text}%`);
+    //});
+    filteringQuery = filteringQuery
+      .where((eb) => eb.or([
+        eb('nickname', 'like', `%${text}%`),
+        eb('catch_prase', 'like', `%${text}%`),
+        eb('real_name', 'like', `%${text}%`),
+        eb('origin_description', 'like', `%${text}%`),
+        sql<boolean>`EXISTS (
+          SELECT 1 FROM unnest(${eb.ref('superpowers')}) AS value
+          WHERE value ILIKE ${`%${text}%`}
+        )`,
+      ]));
   }
-  return await query
+  const found = await filteringQuery
     .selectAll()
     .orderBy(orderingKey, ascending ? 'asc' : 'desc')
     .limit(pageSize)
     .offset((pageNo - 1) * pageSize)
     .execute();
+  const searchCountResult = await filteringQuery
+    .clearSelect()
+    .select(db.fn.countAll().as('count'))
+    .executeTakeFirst()
+  const searchCount = parseInt(searchCountResult?.count as string ?? '0', 10);
+  const pageModulo = searchCount % pageSize;
+  const pageCount = (searchCount - pageModulo) / pageSize + (pageModulo === 0 ? 0 : 1);
+  return {
+    found,
+    pageCount
+  };
 }
 
 export async function updateSuperhero(id: number, updateWith: TSuperheroUpdate) {

@@ -2,7 +2,7 @@ import { editableFromSuperhero, EditableSuperhero, Superhero, superheroFromEdita
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-export default function SuperheroForm(params: {
+export default function SuperheroEntityForm(params: {
   edit?: boolean;
   close?: Function;
   onFormSubmit: Function;

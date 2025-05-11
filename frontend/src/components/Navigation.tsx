@@ -20,7 +20,7 @@ const Navigation = () => {
   const pathname = usePathname();
   
   return (
-    <nav className="bg-white border-b dark:bg-gray-900">
+    <nav className="bg-white border-b border-gray-300">
       <div className="max-w-screen-xl flex flex-row items-center justify-start mx-auto p-4">
         {paths.map((path) => (
           <Link

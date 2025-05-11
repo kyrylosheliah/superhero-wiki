@@ -1,24 +1,52 @@
+import Pagination from "@/components/Pagination";
 import { SuperheroCard } from "@/components/SuperheroCard";
-import SuperheroForm from "@/components/SuperheroForm";
+import SuperheroEntityForm from "@/components/SuperheroEntityForm";
 import SuperheroInfo from "@/components/SuperheroInfo";
-import { emptySuperhero, Superhero, SuperheroAggregate } from "@/entities/Superhero";
+import SuperheroSearchForm from "@/components/SuperheroSearchForm";
+import { emptySuperhero, emptySuperheroSearch, Superhero, SuperheroAggregate, SuperheroSearch } from "@/entities/Superhero";
 import { emitHttp } from "@/utils/http";
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 
 export default function SuperheroGallery() {
   const [items, setItems] = useState<Array<SuperheroAggregate>>([]);
-  const [selection, select] = useState<
-    number | null
-  >(null);
+  const [selection, select] = useState<number | null>(null);
 
-  const refetch = async () => {
-    const response = await emitHttp("GET", "/superhero/all");
-    const data = await response.json();
+  const searchForm = useForm<SuperheroSearch>({
+    defaultValues: emptySuperheroSearch(),
+  });
+  const [pageNo, setPageNo] = useState<number>(1);
+  const [pageCount, setPageCount] = useState<number>(0);
+
+  const submitSuperheroesSearch = searchForm.handleSubmit(async (data: SuperheroSearch) => {
+    const response = await emitHttp("POST", "/superhero/search", data);
     if (!response.ok) {
-      console.error(data.error);
+      setItems([]);
       return;
     }
-    let state: Array<SuperheroAggregate> = (data as Array<Superhero>).map(
+    const searchResult: {
+      found: Array<Superhero>;
+      pageCount: number;
+    } = await response.json();
+    setPageCount(searchResult.pageCount);
+    assembleSuperheroes(searchResult.found);
+  });
+
+  useEffect(() => {
+    setPageNo(1);
+  }, [pageCount]);
+
+  useEffect(() => {
+    submitSuperheroesSearch();
+  }, []);
+
+  useEffect(() => {
+    searchForm.setValue("pageNo", pageNo);
+    submitSuperheroesSearch();
+  }, [pageNo]);
+
+  const assembleSuperheroes = async (found: Array<Superhero>) => {
+    let state: Array<SuperheroAggregate> = (found).map(
       (el) => ({
         superhero: el,
         cover: "",
@@ -31,7 +59,6 @@ export default function SuperheroGallery() {
         "GET", `/superhero/image/all/${el.superhero.id}`
       );
       if (!(response.ok || response.status === 302)) return el;
-      console.log(response);
       const data = await response.json();
       const images: Array<string> = data.images || [];
       const cover: string | undefined = data.cover || undefined;
@@ -41,17 +68,12 @@ export default function SuperheroGallery() {
         images,
       });
     }));
-    //setItems([...state]);
     setItems(state);
   };
 
-  useEffect(() => {
-    console.log(items);
-  }, [items]);
-
-  useEffect(() => {
-    refetch();
-  }, []);
+  //useEffect(() => {
+  //  console.log(items);
+  //}, [items]);
 
   const updateSuperhero = async (data: Superhero) => {
     const selectedBefore = selection!;
@@ -68,7 +90,6 @@ export default function SuperheroGallery() {
     await emitHttp("GET", `/superhero/${selectedId}`)
       .then((res) => res.json())
       .then((update_data) => {
-        if (update_data[0].numUpdatedRows !== "1") return;
         setItems((arr) => {
           const newArr = [...arr];
           newArr[selectedBefore].superhero = data;
@@ -98,7 +119,7 @@ export default function SuperheroGallery() {
       return newArr;
     });
     select(null);
-    refetch();
+    submitSuperheroesSearch();
   };
 
   const [creation, setCreation] = useState<boolean>(false);
@@ -113,84 +134,59 @@ export default function SuperheroGallery() {
     }
     const newEntity = await response.json();
     alert(`New superhero created with id ${newEntity.id}`);
-    refetch();
+    submitSuperheroesSearch();
     setCreation(false);
   };
 
   return creation ? (
-    <SuperheroForm
+    <SuperheroEntityForm
       edit={true}
       close={() => setCreation(false)}
       onFormSubmit={createSuperhero}
       superhero={emptySuperhero()}
     />
-  ) : (selection !== null
-    ? (
-      <SuperheroInfo
-        cover={items[selection].cover}
-        images={items[selection].images}
-        close={() => select(null)}
-        delete={deleteSelectedSuperhero}
-        update={updateSuperhero}
-        superhero={items[selection].superhero}
-      />
-    ) : (
-      <div className="w-full h-full flex flex-col items-center ">
-        <div className="m-t-8 w-full h-full max-w-100 flex flex-row items-center justify-center">
-          <form className="w-full h-full flex flex-row justify-start items-center">
-            <label htmlFor="search" className="sr-only">
-              Search
-            </label>
-            <input
-              type="search"
-              id="search"
-              className="block w-full p-2 text-sm border border-gray-300 rounded-lg"
-              placeholder="Search"
-              required
-            />
-            <button
-              type="submit"
-              className="w-10! h-8! m-l-1 rounded-lg flex items-center justify-center text-gray-500 hover:bg-black hover:text-white"
-            >
-              <svg
-                className="w-4 h-4"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                />
-              </svg>
-            </button>
-          </form>
-          <button
-            onClick={() => setCreation(true)}
-            className="m-l-8 whitespace-nowrap items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
-          >
-            Or add new ...
-          </button>
-        </div>
-        <div
-          className={`w-full flex items-start flex-row flex-wrap justify-around gap-8 p-8`}
+  ) : ((selection !== null) ? (
+    <SuperheroInfo
+      cover={items[selection].cover}
+      images={items[selection].images}
+      close={() => select(null)}
+      delete={deleteSelectedSuperhero}
+      update={updateSuperhero}
+      superhero={items[selection].superhero}
+    />
+  ) : (
+    <div className="w-full h-full flex flex-col items-center ">
+      <div className="m-t-8 w-full h-full max-w-100 flex flex-row items-center justify-center">
+        <SuperheroSearchForm
+          onFormSubmit={submitSuperheroesSearch}
+          form={searchForm}
+        />
+        <button
+          onClick={() => setCreation(true)}
+          className="m-l-8 whitespace-nowrap items-center p-1 rounded-lg text-gray-600 hover:underline hover:text-black"
         >
-          {items.map((item, index) => (
-            <SuperheroCard
-              key={item.superhero.id}
-              superhero={item.superhero}
-              cover={item.cover}
-              options={{
-                onClick: () => select(index),
-              }}
-            />
-          ))}
-        </div>
+          Or add new ...
+        </button>
       </div>
-    )
-  );
+      <div
+        className={`w-full flex items-start flex-row flex-wrap justify-around gap-8 p-8`}
+      >
+        {items.map((item, index) => (
+          <SuperheroCard
+            key={item.superhero.id}
+            superhero={item.superhero}
+            cover={item.cover}
+            options={{
+              onClick: () => select(index),
+            }}
+          />
+        ))}
+      </div>
+      <div className="mt-8 mb-32">
+        <Pagination
+          {...{ pageNo, setPageNo, pageCount }}
+        />
+      </div>
+    </div>
+  ));
 }

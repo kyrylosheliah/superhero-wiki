@@ -17,25 +17,9 @@ export const mapSuperheroEndpoints: TMapEndpoints = (app) => {
 
   app.post('/superhero/search', async (req: Request, res: Response) => {
     const searchRequest: SuperheroSearchRequest = req.body;
-    // TODO: validate schema
-    const entities = pageFilterSuperheroes(searchRequest);
-    console.log(entities);
-        //IQueryable<T> entities = dbSet.AsQueryable();
-        //var (pageCount, result) = await entities.ToPagedFilteredListAsync(
-        //    new T(),
-        //    request,
-        //    cancellationToken
-        //);
-        //if (pageCount == 0) {
-        //    return TypedResults.NotFound();
-        //}
-        //if (spec.DoAfterGetMultiple is not null) {
-        //    foreach (var entity in result) {
-        //        spec.DoAfterGetMultiple(entity);
-        //    }
-        //}
-        //return TypedResults.Ok(new GetMultipleResponse(pageCount, result));
-    res.status(200);
+    // TODO: validate schema?
+    const searchResult = await pageFilterSuperheroes(searchRequest);
+    res.status(200).json(searchResult);
   });
 
   app.delete('/superhero', async (req: Request, res: Response) => {

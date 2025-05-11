@@ -1,5 +1,5 @@
 import { SuperheroCard } from "@/components/SuperheroCard";
-import SuperheroForm from "@/components/SuperheroForm";
+import SuperheroEntityForm from "@/components/SuperheroEntityForm";
 import { Superhero } from "@/entities/Superhero";
 import { useState } from "react";
 
@@ -16,13 +16,13 @@ export default function SuperheroInfo(params: {
   return (
     <div className="flex flex-col md:flex-row md:order-first">
       <div className="w-full">
-        <SuperheroForm
+        <SuperheroEntityForm
           edit={edit}
           onFormSubmit={params.update}
           superhero={params.superhero}
         />
       </div>
-      <div className="w-full md:w-auto p-8 p-t-4 order-first md:order-last border-b md:border-l flex flex-col justify-start items-center">
+      <div className="w-full md:w-auto p-8 p-t-4 order-first md:order-last border-gray-300 border-b md:border-b-0 md:border-l flex flex-col justify-start items-center">
         <div className="mb-4 w-full flex items-center justify-between">
           <button
             onClick={() => params.close()}
