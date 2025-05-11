@@ -21,6 +21,24 @@ export interface SuperheroTable {
   catch_prase: string | null;
 }
 
+export const getDefaultSuperhero = (): TSuperheroSelect => ({
+  id: 0,
+  nickname: "",
+  real_name: null,
+  origin_description: null,
+  superpowers: [],
+  catch_prase: null,
+});
+
+export const getSuperheroKeys = (): Array<keyof SuperheroTable> => ([
+  "id",
+  "nickname",
+  "real_name",
+  "origin_description",
+  "superpowers",
+  "catch_prase",
+]);
+
 export type TSuperheroSelect = Selectable<SuperheroTable>;
 export type TSuperheroCreate = Insertable<SuperheroTable>;
 export type TSuperheroUpdate = Updateable<SuperheroTable>;

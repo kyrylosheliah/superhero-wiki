@@ -1,4 +1,4 @@
-import { db, TSuperheroCreate, TSuperheroSelect, TSuperheroUpdate } from '.';
+import { db, getSuperheroKeys, SuperheroTable, TSuperheroCreate, TSuperheroSelect, TSuperheroUpdate } from '.';
 
 export async function findSuperheroById(id: number) {
   return await db.selectFrom('superhero')
@@ -15,6 +15,35 @@ export async function findSuperhero(criteria: Partial<TSuperheroSelect>) {
   }
 
   return await query.selectAll().execute();
+}
+
+export interface SuperheroSearchRequest {
+  pageNo: number;
+  pageSize: number;
+  ascending?: boolean;
+  orderBy?: string;
+  text?: string;
+}
+
+export async function pageFilterSuperheroes(searchRequest: SuperheroSearchRequest) {
+  const { pageNo, pageSize, ascending, orderBy, text } = searchRequest;
+  const keys = getSuperheroKeys();
+  const orderingKey: keyof SuperheroTable =
+    orderBy && keys.includes(orderBy as keyof SuperheroTable)
+      ? orderBy as keyof SuperheroTable
+      : "id";
+  let query = db.selectFrom('superhero');
+  if (text) {
+    keys.map((key) => {
+      query = query.where(key, 'like', `%${text}%`);
+    });
+  }
+  return await query
+    .selectAll()
+    .orderBy(orderingKey, ascending ? 'asc' : 'desc')
+    .limit(pageSize)
+    .offset((pageNo - 1) * pageSize)
+    .execute();
 }
 
 export async function updateSuperhero(id: number, updateWith: TSuperheroUpdate) {

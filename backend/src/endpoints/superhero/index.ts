@@ -1,6 +1,6 @@
 import { TMapEndpoints } from "..";
 import { db, TSuperheroCreate, TSuperheroUpdate } from "../../database";
-import { createSuperhero, deleteSuperhero, findSuperheroById, updateSuperhero } from "../../database/SuperheroRepository";
+import { createSuperhero, deleteSuperhero, findSuperheroById, pageFilterSuperheroes, SuperheroSearchRequest, updateSuperhero } from "../../database/SuperheroRepository";
 import { mapSuperheroImageEndpoints } from "./image";
 import { Request, Response } from "express";
 
@@ -8,12 +8,35 @@ export const mapSuperheroEndpoints: TMapEndpoints = (app) => {
 
   mapSuperheroImageEndpoints(app);
 
-  app.get('/superhero/all', async (req: Request, res: Response) => {
-    const superheroes = await db.selectFrom('superhero')
-      .selectAll()
-      .execute();
-    res.json(superheroes);
-  });
+  //app.get('/superhero/all', async (req: Request, res: Response) => {
+  //  const superheroes = await db.selectFrom('superhero')
+  //    .selectAll()
+  //    .execute();
+  //  res.json(superheroes);
+  //});
+
+  app.post('/superhero/search', async (req: Request, res: Response) => {
+    const searchRequest: SuperheroSearchRequest = req.body;
+    // TODO: validate schema
+    const entities = pageFilterSuperheroes(searchRequest);
+        //IQueryable<T> entities = dbSet.AsQueryable();
+        //var (pageCount, result) = await entities.ToPagedFilteredListAsync(
+        //    new T(),
+        //    request,
+        //    cancellationToken
+        //);
+        //if (pageCount == 0) {
+        //    return TypedResults.NotFound();
+        //}
+        //if (spec.DoAfterGetMultiple is not null) {
+        //    foreach (var entity in result) {
+        //        spec.DoAfterGetMultiple(entity);
+        //    }
+        //}
+        //return TypedResults.Ok(new GetMultipleResponse(pageCount, result));
+    res.status(200);
+  }
+
 
   app.delete('/superhero', async (req: Request, res: Response) => {
     const { id } = req.body;
