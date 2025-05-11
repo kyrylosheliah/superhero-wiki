@@ -4,6 +4,8 @@ Tech stack: Node.JS + Next.js React + PostgreSQL
 
 ## Deployment prerequisites
 
+PostgreSQL DB should be installed.
+
 An environment variable for PosgreSQL DB connection must be defined or, otherwise, specified in the `./backend/.env` file:
 ```
 DATABASE_URL="postgresql://postgres:password@localhost:5433/SuperheroWiki?schema=public"
@@ -12,7 +14,23 @@ DATABASE_URL="postgresql://postgres:password@localhost:5433/SuperheroWiki?schema
 The DB schema must be reproduced with:
 ```
 cd backend
+npm install
 npm run migrate
+```
+
+Run the backend
+```
+cd backend
+npm install
+npm run start
+```
+
+Run the frontend
+```
+cd frontend
+npm install
+npm run build
+npm run start
 ```
 
 ## Design choises
@@ -35,10 +53,10 @@ npm run migrate
 Must:
 - Upload and delete cover and secondary images functionality
 - Show and edit gallery images in the info
-- Ensure that deployment steps are working (missing: run step)
 - Testing solution?
 
 Could:
+- Maybe extract hooks
 - Sorting order and orderBy field selection elements
 - Further normalization tables for superpowers Wiki functionality?
 - Superpower rich list input, superpower chips and 
