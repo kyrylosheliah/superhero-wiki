@@ -2,7 +2,7 @@
 
 Tech stack: Node.JS + Next.js React + PostgreSQL
 
-## Deployment prerequisites
+## Run
 
 PostgreSQL DB should be installed.
 
