@@ -2,7 +2,6 @@ import { SuperheroCard } from "@/components/SuperheroCard";
 import SuperheroEntityForm from "@/components/SuperheroEntityForm";
 import SuperheroGallery from "@/components/SuperheroGallery";
 import { TSuperhero } from "@/entities/Superhero";
-import { emitHttp } from "@/utils/http";
 import { useRef, useState } from "react";
 
 export default function SuperheroInfo(params: {

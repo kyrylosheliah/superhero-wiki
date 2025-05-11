@@ -5,8 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 import formidable from 'formidable';
 import path from "node:path";
 
-const IMAGES = path.join(process.cwd(), "../images");
-const COVERS = path.join(process.cwd(), "../covers");
+const CWD = process.cwd();
+const IMAGES = path.join(CWD, "../images");
+const COVERS = path.join(CWD, "../covers");
 
 export const mapSuperheroImageEndpoints: TMapEndpoints = (app) => {
 
@@ -31,10 +32,10 @@ export const mapSuperheroImageEndpoints: TMapEndpoints = (app) => {
   app.delete('/superhero/image', async (req: Request, res: Response) => {
     const { filename } = req.body;
     //const fileSuperheroId = filename.split('_')[0];
-    const filepath = ".." + filename;
+    const filepath = path.join(CWD, "..", filename);
     if (fs.existsSync(filepath)) {
       fs.unlinkSync(filepath);
-      res.status(204);
+      res.status(204).send("No content");
     } else {
       res.status(404).json({ error: 'Not found'});
     }
@@ -43,10 +44,10 @@ export const mapSuperheroImageEndpoints: TMapEndpoints = (app) => {
   app.delete('/superhero/cover', async (req: Request, res: Response) => {
     const { filename } = req.body;
     //const fileSuperheroId = filename.split('_')[0];
-    const filepath = ".." + filename;
+    const filepath = path.join(CWD, "..", filename);
     if (fs.existsSync(filepath)) {
       fs.unlinkSync(filepath);
-      res.status(204);
+      res.status(204).send("No content");
     } else {
       res.status(404).json({ error: 'Not found'});
     }
@@ -91,7 +92,7 @@ export const mapSuperheroImageEndpoints: TMapEndpoints = (app) => {
         return res.status(400).json({ error: "No file uploaded" });
       }
       const generatedFilename = getCoverFilename(
-        id, file.originalFilename || ".jpg", COVERS
+        id, file.originalFilename || ".jpg"
       );
       const newFilepath = path.join(COVERS, generatedFilename);
       fs.rename(file.filepath, newFilepath, () => {
@@ -102,7 +103,7 @@ export const mapSuperheroImageEndpoints: TMapEndpoints = (app) => {
 
 };
 
-const getCoverFilename = (id: any, filename: string, dir: string) => {
+const getCoverFilename = (id: any, filename: string) => {
   const filenameParts = filename.split('.');
   const ext = filenameParts[filenameParts.length - 1];
   return `${id}_cover.${ext}`;

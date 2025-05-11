@@ -207,7 +207,7 @@ export default function SuperheroSearch() {
       alert("Error deleting an image");
       return;
     }
-    updateSuperheroImages(selected);
+    await updateSuperheroImages(selected);
   };
 
   const uploadSuperheroCover = async (file: File) => {

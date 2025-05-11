@@ -12,7 +12,6 @@ export const emitHttpForm = (method: string, path: string, body: any = undefined
   body && Object.keys(body).map((key) => {
     formData.append(key, body[key]);
   });
-  console.log(formData);
   return fetch(SERVER + path, {
     method,
     body: formData,
