@@ -214,7 +214,7 @@ export default function SuperheroSearch() {
     const selected = selection!;
     const response = await emitHttpForm("POST", "/superhero/cover", {
       id: items[selected].superhero.id.toString(),
-      file
+      file,
     });
     const data = await response.json();
     if (!(response.ok || response.status === 201)) {

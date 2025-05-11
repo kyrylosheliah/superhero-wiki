@@ -5,6 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 import formidable from 'formidable';
 import path from "node:path";
 
+const IMAGES = path.join(process.cwd(), "../images");
+const COVERS = path.join(process.cwd(), "../covers");
+
 export const mapSuperheroImageEndpoints: TMapEndpoints = (app) => {
 
   app.get('/superhero/image/all/:id', async (req: Request, res: Response) => {
@@ -58,66 +61,65 @@ export const mapSuperheroImageEndpoints: TMapEndpoints = (app) => {
         res.status(500).send("Error: file not saved");
         return;
       }
-      console.log("2");
       const file = files.file![0];
       const id = fields.id![0];
-      console.log(id);
-      console.log(file);
       if (!file) {
         return res.status(400).json({ error: "No file uploaded" });
       }
-      const path = "/images";
-      const generatedFilename = generateFilename(
-        id,
-        file.filepath,
-        path,
-        getUniqueFilename
+      const generatedFilename = generateUniqueImageFilename(
+        id, file.originalFilename || ".jpg", IMAGES
       );
-      fs.rename(file.filepath, generatedFilename, () => {
-        res
-          .status(201)
-          .json({ generatedFilename, url: `${path}/${generatedFilename}` });
+      const newFilepath = path.join(IMAGES, generatedFilename);
+      fs.rename(file.filepath, newFilepath, () => {
+        res.status(201).json({ url: `/images/${generatedFilename}` });
       });
     });
   });
 
   app.post('/superhero/cover', async (req: Request, res: Response) => {
-    const { id, filename, image } = req.body;
-    console.log(req.body);
-    const path = "/cover";
-    const generatedFilename = generateFilename(id, filename, path, getSpecificFilename);
-    fs.writeFile(generatedFilename, image, (err) => {
+    const form = formidable({});
+    form.parse(req, (err, fields, files) => {
       if (err) {
-        console.error('Failed to save a file:', err);
-        return res.status(500).send('Error: file not saved');
+        //next(err);
+        console.error("Failed to save a file:", err);
+        res.status(500).send("Error: file not saved");
+        return;
       }
-      res.status(201).json({ generatedFilename, url: `${path}/${generatedFilename}` });
+      const file = files.file![0];
+      const id = fields.id![0];
+      if (!file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+      const generatedFilename = getCoverFilename(
+        id, file.originalFilename || ".jpg", COVERS
+      );
+      const newFilepath = path.join(COVERS, generatedFilename);
+      fs.rename(file.filepath, newFilepath, () => {
+        res.status(201).json({ url: `/covers/${generatedFilename}` });
+      });
     });
   });
 
 };
 
-const getUniqueFilename = (id: any, ext: any) => {
-  return `${id}_${uuidv4()}.${ext}`;
-};
-
-const getSpecificFilename = (id: any, ext: any) => {
+const getCoverFilename = (id: any, filename: string, dir: string) => {
+  const filenameParts = filename.split('.');
+  const ext = filenameParts[filenameParts.length - 1];
   return `${id}_cover.${ext}`;
 };
 
-const generateFilename = (
-  id: any,
-  filename: string,
-  path: string,
-  getFilename: Function,
-) => {
+const generateUniqueFilename = (id: any, ext: any) => {
+  return `${id}_${uuidv4()}.${ext}`;
+};
+
+const generateUniqueImageFilename = (id: any, filename: string, dir: string) => {
   const filenameParts = filename.split('.');
   const ext = filenameParts[filenameParts.length - 1];
-  let newFilename = getFilename(id, ext);
-  let newFilepath = `..${path}/${newFilename}`;
+  let newFilename = generateUniqueFilename(id, ext);
+  let newFilepath = `..${dir}/${newFilename}`;
   while (fs.existsSync(newFilepath)) {
-    newFilename = getFilename(id, ext);
-    newFilepath = `..${path}/${newFilename}`;
+    newFilename = generateUniqueFilename(id, ext);
+    newFilepath = `..${dir}/${newFilename}`;
   }
   return newFilename;
 };
