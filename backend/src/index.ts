@@ -12,16 +12,15 @@ app.use((req, res, next) => {
   if (req.headers['content-type']?.startsWith('multiplart/form-data')) {
     return next();
   } else {
-    // const originalJson = res.json.bind(res);
-    // res.json = (data) => {
-    //   const safeData = JSON.parse(
-    //     JSON.stringify(data, (_, v) =>
-    //       typeof v === "bigint" ? v.toString() : v
-    //     )
-    //   );
-    //   return originalJson(safeData);
-    // };
-    // next();
+    const originalJson = res.json.bind(res);
+    res.json = (data) => {
+      const safeData = JSON.parse(
+        JSON.stringify(data, (_, v) =>
+          typeof v === "bigint" ? v.toString() : v
+        )
+      );
+      return originalJson(safeData);
+    };
     express.json()(req, res, next);
   }
 })
