@@ -71,7 +71,7 @@ export default function SuperheroGallery() {
         if (update_data[0].numUpdatedRows !== "1") return;
         setItems((arr) => {
           const newArr = [...arr];
-          newArr[selectedBefore].superhero = editableFromSuperhero(data);
+          newArr[selectedBefore].superhero = data;
           return newArr;
         });
       })
