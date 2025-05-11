@@ -67,10 +67,11 @@ export default function SuperheroGallery() {
     // unnecessary refetch for testing purposes
     await emitHttp("GET", `/superhero/${selectedId}`)
       .then((res) => res.json())
-      .then((data) => {
+      .then((update_data) => {
+        if (update_data[0].numUpdatedRows !== "1") return;
         setItems((arr) => {
           const newArr = [...arr];
-          newArr[selectedBefore] = data;
+          newArr[selectedBefore].superhero = editableFromSuperhero(data);
           return newArr;
         });
       })
