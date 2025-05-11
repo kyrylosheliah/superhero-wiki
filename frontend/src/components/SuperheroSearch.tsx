@@ -4,7 +4,7 @@ import SuperheroEntityForm from "@/components/SuperheroEntityForm";
 import SuperheroInfo from "@/components/SuperheroInfo";
 import SuperheroSearchForm from "@/components/SuperheroSearchForm";
 import { emptySuperhero, emptySuperheroSearch, TSuperhero, TSuperheroAggregate, TSuperheroSearch } from "@/entities/Superhero";
-import { emitHttp } from "@/utils/http";
+import { emitHttp, emitHttpForm } from "@/utils/http";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
@@ -55,11 +55,9 @@ export default function SuperheroSearch() {
     );
     setItems(state);
     state = await Promise.all(state.map(async (el) => {
-      const response = await emitHttp(
-        "GET", `/superhero/image/all/${el.superhero.id}`
-      );
-      if (!(response.ok || response.status === 302)) return el;
-      const data = await response.json();
+      const result = await getSuperheroImages(el.superhero.id);
+      if (result.fail) return el;
+      const data = await result.data;
       const images: Array<string> = data.images || [];
       const cover: string | undefined = data.cover || undefined;
       return ({
@@ -71,13 +69,42 @@ export default function SuperheroSearch() {
     setItems(state);
   };
 
+  const getSuperheroImages = async (id: number) => {
+    const response = await emitHttp(
+      "GET", `/superhero/image/all/${id}`
+    );
+    const data = await response.json();
+    return { data, fail: !(response.ok || response.status === 302) };
+  }
+
+  const updateSuperheroImages = async (selected: number) => {
+    const id = items[selected].superhero.id;
+    const result = await getSuperheroImages(id);
+    if (result.fail) {
+      console.error("Error updating superhero images");
+      return;
+    }
+    const data = result.data
+    const images: Array<string> = data.images || [];
+    const cover: string | undefined = data.cover || undefined;
+    setItems((prev) => {
+      let newItems = [...prev];
+      newItems[selected] = {
+        superhero: newItems[selected].superhero,
+        cover,
+        images,
+      };
+      return newItems;
+    });
+  };
+
   //useEffect(() => {
   //  console.log(items);
   //}, [items]);
 
   const updateSuperhero = async (data: TSuperhero) => {
-    const selectedBefore = selection!;
-    const selectedId = items[selectedBefore].superhero.id;
+    const selected = selection!;
+    const selectedId = items[selected].superhero.id;
     const response = await emitHttp("PUT", "/superhero", {
       id: selectedId,
       entity: data,
@@ -89,10 +116,10 @@ export default function SuperheroSearch() {
     // unnecessary refetch for testing purposes
     await emitHttp("GET", `/superhero/${selectedId}`)
       .then((res) => res.json())
-      .then((update_data) => {
+      .then((updateData) => {
         setItems((arr) => {
           const newArr = [...arr];
-          newArr[selectedBefore].superhero = data;
+          newArr[selected].superhero = updateData;
           return newArr;
         });
       })
@@ -138,6 +165,64 @@ export default function SuperheroSearch() {
     setCreation(false);
   };
 
+  const deleteSuperheroImage = async (image: string) => {
+    const confirmation = confirm(
+      "Are you sure you want to delete this image?"
+    );
+    if (!confirmation) return;
+    const selected = selection!;
+    const response = await emitHttp("DELETE", "/superhero/image", {
+      filename: image
+    });
+    if (!(response.ok || response.status === 204)) {
+      alert("Error deleting an image");
+      return;
+    }
+    updateSuperheroImages(selected);
+  };
+
+  const uploadSuperheroImage = async (file: File) => {
+    const selected = selection!;
+    const response = await emitHttpForm("POST", "/superhero/image", {
+      id: items[selected].superhero.id.toString(),
+      file
+    });
+    const data = await response.json();
+    if (!(response.ok || response.status === 201)) {
+      console.error('Error uploading image:', data);
+    }
+    updateSuperheroImages(selected);
+  };
+
+  const deleteSuperheroCover = async (image: string) => {
+    const confirmation = confirm(
+      "Are you sure you want to delete the cover?"
+    );
+    if (!confirmation) return;
+    const selected = selection!;
+    const response = await emitHttp("DELETE", "/superhero/cover", {
+      filename: image,
+    });
+    if (!(response.ok || response.status === 204)) {
+      alert("Error deleting an image");
+      return;
+    }
+    updateSuperheroImages(selected);
+  };
+
+  const uploadSuperheroCover = async (file: File) => {
+    const selected = selection!;
+    const response = await emitHttpForm("POST", "/superhero/cover", {
+      id: items[selected].superhero.id.toString(),
+      file
+    });
+    const data = await response.json();
+    if (!(response.ok || response.status === 201)) {
+      console.error('Error uploading image:', data);
+    }
+    updateSuperheroImages(selected);
+  };
+
   return creation ? (
     <SuperheroEntityForm
       edit={true}
@@ -153,9 +238,13 @@ export default function SuperheroSearch() {
       delete={deleteSelectedSuperhero}
       update={updateSuperhero}
       superhero={items[selection].superhero}
+      deleteImage={deleteSuperheroImage}
+      uploadImage={uploadSuperheroImage}
+      deleteCover={deleteSuperheroCover}
+      uploadCover={uploadSuperheroCover}
     />
   ) : (
-    <div className="w-full h-full flex flex-col items-center ">
+    <div className="w-full h-full lg:max-w-screen-lg mx-auto flex flex-col items-center ">
       <div className="m-t-8 w-full h-full max-w-100 flex flex-row items-center justify-center">
         <SuperheroSearchForm
           onFormSubmit={submitSuperheroesSearch}

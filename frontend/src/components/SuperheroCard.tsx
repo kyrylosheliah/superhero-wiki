@@ -11,7 +11,7 @@ export const SuperheroCard = (params: {
 }) => (
   <div
     {...params.options}
-    className={`${styles.inherit_radius} ${!params.cover && "border border-gray-200"} relative p-4 w-60 h-80 hover:cursor-pointer flex flex-col justify-between items-center text-center shadow-sm rounded-xl overflow-hidden`}
+    className={`${styles.inherit_radius} ${!params.cover && "border border-gray-200"} relative p-4 w-60 h-80 hover:cursor-pointer flex flex-col justify-between items-center text-center shadow-md rounded-xl overflow-hidden`}
   >
     {params.cover && (
       <Image

@@ -1,7 +1,5 @@
-import { Superhero } from "@/entities/Superhero";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 
 const paths = [
   {
@@ -16,12 +14,12 @@ const paths = [
   },
 ];
 
-const Navigation = () => {
+export default function Navigation() {
   const pathname = usePathname();
   
   return (
     <nav className="bg-white border-b border-gray-300">
-      <div className="max-w-screen-xl flex flex-row items-center justify-start mx-auto p-4">
+      <div className="md:max-w-screen-lg flex flex-row items-center justify-start mx-auto p-4">
         {paths.map((path) => (
           <Link
             key={"navigation_" + path.href}
@@ -39,5 +37,3 @@ const Navigation = () => {
     </nav>
   );
 };
-
-export default Navigation;

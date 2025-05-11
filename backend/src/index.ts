@@ -9,17 +9,22 @@ app.use(cors({
 }));
 
 app.use((req, res, next) => {
-  const originalJson = res.json.bind(res);
-  res.json = (data) => {
-    const safeData = JSON.parse(JSON.stringify(data, (_, v) =>
-      typeof v === 'bigint' ? v.toString() : v
-    ));
-    return originalJson(safeData);
-  };
-  next();
-});
-
-app.use(express.json());
+  if (req.headers['content-type']?.startsWith('multiplart/form-data')) {
+    return next();
+  } else {
+    // const originalJson = res.json.bind(res);
+    // res.json = (data) => {
+    //   const safeData = JSON.parse(
+    //     JSON.stringify(data, (_, v) =>
+    //       typeof v === "bigint" ? v.toString() : v
+    //     )
+    //   );
+    //   return originalJson(safeData);
+    // };
+    // next();
+    express.json()(req, res, next);
+  }
+})
 
 app.use(express.raw({ type: 'image/*', limit: '10mb' }));
 app.use('/images', express.static('../images'));
