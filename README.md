@@ -51,8 +51,6 @@ npm run start
 ## Drawing board / TODOs
 
 Must:
-- Upload and delete cover and secondary images functionality
-- Show and edit gallery images in the info
 - Testing solution?
 
 Could:
