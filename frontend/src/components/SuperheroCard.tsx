@@ -2,6 +2,8 @@ import { Superhero } from "@/entities/Superhero";
 import { SERVER } from "@/utils/http";
 import Image from "next/image";
 
+import styles from './SuperheroCard.module.css';
+
 export const SuperheroCard = (params: {
   superhero: Superhero;
   cover?: string;
@@ -9,7 +11,7 @@ export const SuperheroCard = (params: {
 }) => (
   <div
     {...params.options}
-    className="relative p-4 w-75 h-100 hover:cursor-pointer border flex flex-col justify-between items-center text-center border-gray-200 rounded-lg shadow-sm"
+    className={`${styles.inherit_radius} ${!params.cover && "border border-gray-200"} relative p-4 w-75 h-100 hover:cursor-pointer flex flex-col justify-between items-center text-center shadow-sm rounded-xl`}
   >
     {params.cover && (
       <Image
@@ -24,9 +26,11 @@ export const SuperheroCard = (params: {
       <p className="fw-700 mb-2 text-2xl font-bold tracking-tight text-gray-100">
         {params.superhero.nickname}
       </p>
-      <p className="mb-3 font-normal text-gray-300">
-        {params.superhero.catch_prase}
-      </p>
+      {params.superhero.catch_prase && (
+        <p className="mb-3 font-normal text-gray-300">
+          {params.superhero.catch_prase}
+        </p>
+      )}
     </div>
   </div>
 );

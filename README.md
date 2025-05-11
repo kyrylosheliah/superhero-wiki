@@ -41,6 +41,7 @@ Must:
 
 Could:
 - Superpower rich list input, superpower chips and rish search page
+- Multisearch by spawning search field criteria
 - Docker deployment option?
 - SwaggerUI via tRPC + Zod:
     - Manual endpoint testing option

@@ -1,0 +1,3 @@
+.inherit_radius > * {
+    border-radius: inherit;
+}

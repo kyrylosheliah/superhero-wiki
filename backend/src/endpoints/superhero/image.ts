@@ -1,9 +1,28 @@
 import { Request, Response } from "express";
 import { TMapEndpoints } from "../";
-import fs, { glob } from "node:fs";
+import fs, { glob, globSync } from "node:fs";
 import { v4 as uuidv4 } from 'uuid';
+import path from "node:path";
 
 export const mapSuperheroImageEndpoints: TMapEndpoints = (app) => {
+
+  app.get('/superhero/image/all/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+      const imageFiles = globSync(`../images/${id}*`);
+      const coverFiles = globSync(`../covers/${id}_cover*`);
+      const images = imageFiles.map(file =>
+        file.slice(2).replace(/\\/g, "/").replace("//", "/")
+      );
+      const cover = coverFiles.length
+        ? coverFiles[0].slice(2).replace(/\\/g, "/").replace("//", "/")
+        : undefined;
+      res.status(302).json({ images, cover });
+    } catch (err) {
+      console.error('Error fetching images or covers', err);
+      res.status(500).json({ error: 'Server error while retrieving files.' });
+    }
+  });
 
   app.delete('/superhero/image', async (req: Request, res: Response) => {
     const { filename } = req.body;
@@ -17,46 +36,41 @@ export const mapSuperheroImageEndpoints: TMapEndpoints = (app) => {
     }
   });
 
-  app.get('/superhero/image/all/:id', async (req: Request, res: Response) => {
-    const { id } = req.params;
-    glob(`../images/${id}*`, (err, files) => {
-      if (err) {
-        const errmsg = 'Error searching for images';
-        console.error(errmsg, err);
-        return res.status(500).json({ error: errmsg });
-      }
-      const filePaths = files.map(
-        file => file.slice(2).replace(/\\/g, "/").replace("//", "/")
-      );
-      res.status(302).json({ images: filePaths })
-    });
+  app.delete('/superhero/cover', async (req: Request, res: Response) => {
+    const { filename } = req.body;
+    //const fileSuperheroId = filename.split('_')[0];
+    const filepath = "../covers/" + filename;
+    if (fs.existsSync(filepath)) {
+      fs.unlinkSync(filepath);
+      res.status(204);
+    } else {
+      res.status(404).json({ error: 'Not found'});
+    }
   });
 
   app.post('/superhero/image', async (req: Request, res: Response) => {
     const { id, filename, image } = req.body;
-    const generatedFilename = generateFilename(
-      id, filename, getUniqueFilename
-    );
+    const path = "/images";
+    const generatedFilename = generateFilename(id, filename, path, getUniqueFilename);
     fs.writeFile(generatedFilename, image, (err) => {
       if (err) {
         console.error('Failed to save a file:', err);
         return res.status(500).send('Error: file not saved');
       }
-      res.status(201).json({ generatedFilename, url: `images/${generatedFilename}` });
+      res.status(201).json({ generatedFilename, url: `${path}/${generatedFilename}` });
     });
   });
 
-  app.put('/superhero/image', async (req: Request, res: Response) => {
+  app.post('/superhero/cover', async (req: Request, res: Response) => {
     const { id, filename, image } = req.body;
-    const generatedFilename = generateFilename(
-      id, filename, getSpecificFilename
-    );
+    const path = "/cover";
+    const generatedFilename = generateFilename(id, filename, path, getSpecificFilename);
     fs.writeFile(generatedFilename, image, (err) => {
       if (err) {
         console.error('Failed to save a file:', err);
         return res.status(500).send('Error: file not saved');
       }
-      res.status(201).json({ generatedFilename, url: `images/${generatedFilename}` });
+      res.status(201).json({ generatedFilename, url: `${path}/${generatedFilename}` });
     });
   });
 
@@ -70,14 +84,19 @@ const getSpecificFilename = (id: any, ext: any) => {
   return `${id}_cover.${ext}`;
 };
 
-const generateFilename = (id: any, filename: string, getFilename: Function) => {
+const generateFilename = (
+  id: any,
+  filename: string,
+  path: string,
+  getFilename: Function,
+) => {
   const filenameParts = filename.split('.');
   const ext = filenameParts[filenameParts.length - 1];
   let newFilename = getFilename(id, ext);
-  let newFilepath = `../images/${newFilename}`;
+  let newFilepath = `..${path}/${newFilename}`;
   while (fs.existsSync(newFilepath)) {
     newFilename = getFilename(id, ext);
-    newFilepath = `../images/${newFilename}`;
+    newFilepath = `..${path}/${newFilename}`;
   }
   return newFilename;
 };

@@ -10,7 +10,10 @@ const nextConfig: NextConfig = {
     return config;
   },
   images: {
-    remotePatterns: [new URL('http://localhost:3001/images/**')],
+    remotePatterns: [
+      new URL('http://localhost:3001/images/**'),
+      new URL('http://localhost:3001/covers/**'),
+    ],
   },
 };
 

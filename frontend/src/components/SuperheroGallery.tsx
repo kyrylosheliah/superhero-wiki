@@ -31,20 +31,18 @@ export default function SuperheroGallery() {
         "GET", `/superhero/image/all/${el.superhero.id}`
       );
       if (!(response.ok || response.status === 302)) return el;
-      var images: Array<string> = (await response.json()).images;
-      if (!images.length) return el;
-      const coverIndex = images.findIndex((value) => value.includes("_cover"));
-      let cover: string | undefined;
-      if (coverIndex !== -1) {
-        cover = images.splice(coverIndex, 1)[0];
-      }
+      console.log(response);
+      const data = await response.json();
+      const images: Array<string> = data.images || [];
+      const cover: string | undefined = data.cover || undefined;
       return ({
         superhero: el.superhero,
-        cover: cover,
-        images: images,
+        cover,
+        images,
       });
     }));
-    setItems([...state]);
+    //setItems([...state]);
+    setItems(state);
   };
 
   useEffect(() => {
@@ -128,6 +126,8 @@ export default function SuperheroGallery() {
   ) : (selection !== null
     ? (
       <SuperheroInfo
+        cover={items[selection].cover}
+        images={items[selection].images}
         close={() => select(null)}
         delete={deleteSelectedSuperhero}
         update={updateSuperhero}

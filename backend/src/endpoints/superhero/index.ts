@@ -8,17 +8,18 @@ export const mapSuperheroEndpoints: TMapEndpoints = (app) => {
 
   mapSuperheroImageEndpoints(app);
 
-  //app.get('/superhero/all', async (req: Request, res: Response) => {
-  //  const superheroes = await db.selectFrom('superhero')
-  //    .selectAll()
-  //    .execute();
-  //  res.json(superheroes);
-  //});
+  app.get('/superhero/all', async (req: Request, res: Response) => {
+    const superheroes = await db.selectFrom('superhero')
+      .selectAll()
+      .execute();
+    res.json(superheroes);
+  });
 
   app.post('/superhero/search', async (req: Request, res: Response) => {
     const searchRequest: SuperheroSearchRequest = req.body;
     // TODO: validate schema
     const entities = pageFilterSuperheroes(searchRequest);
+    console.log(entities);
         //IQueryable<T> entities = dbSet.AsQueryable();
         //var (pageCount, result) = await entities.ToPagedFilteredListAsync(
         //    new T(),
@@ -35,8 +36,7 @@ export const mapSuperheroEndpoints: TMapEndpoints = (app) => {
         //}
         //return TypedResults.Ok(new GetMultipleResponse(pageCount, result));
     res.status(200);
-  }
-
+  });
 
   app.delete('/superhero', async (req: Request, res: Response) => {
     const { id } = req.body;

@@ -5,6 +5,8 @@ import { useState } from "react";
 
 export default function SuperheroInfo(params: {
   superhero: Superhero;
+  cover?: string;
+  images: Array<string>;
   close: Function;
   delete: Function;
   update: (data: Superhero) => Promise<void>;
@@ -44,7 +46,7 @@ export default function SuperheroInfo(params: {
             </button>
           )}
         </div>
-        <SuperheroCard superhero={params.superhero} />
+        <SuperheroCard superhero={params.superhero} cover={params.cover} />
         {edit && (
           <div className="m-t-4 self-end">
             <button

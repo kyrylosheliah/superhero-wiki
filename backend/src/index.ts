@@ -23,6 +23,7 @@ app.use(express.json());
 
 app.use(express.raw({ type: 'image/*', limit: '10mb' }));
 app.use('/images', express.static('../images'));
+app.use('/covers', express.static('../covers'));
 
 mapAllEndpoints(app);
 
